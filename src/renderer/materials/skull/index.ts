@@ -4,7 +4,6 @@ import { getAttributeLocation, getUniformLocation } from "../../utils/location";
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
 import { vec3 } from "gl-matrix";
-import { hintColor } from "../../colors";
 
 const program = createProgram(gl, codeVert, codeFrag);
 

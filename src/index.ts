@@ -1,5 +1,12 @@
 import "./debug/mock-random";
-// import "./debug/stats";
-import { debug } from "./debug/debug";
+import "./debug/auto-reload";
+import "./debug/debug";
 
-console.log("cc");
+import "./controls";
+import { render } from "./renderer/render";
+
+const loop = () => {
+  render();
+  requestAnimationFrame(loop);
+};
+loop();

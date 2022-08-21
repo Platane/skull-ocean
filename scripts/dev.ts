@@ -57,8 +57,6 @@ export const dev = async () => {
         );
       }
 
-      console.log(filePath);
-
       res.end(fs.readFileSync(filePath));
     } catch (error: any) {
       if (error.code === "ENOENT") res.writeHead(404);

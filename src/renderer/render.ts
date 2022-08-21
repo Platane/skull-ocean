@@ -2,7 +2,7 @@ import { gl } from "../canvas";
 import { worldMatrix } from "./camera";
 import { draw as drawSkull } from "./materials/skull";
 
-gl.clearColor(0, 0, 0, 1);
+gl.clearColor(0, 0, 0, 0);
 gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 
 gl.enable(gl.CULL_FACE);

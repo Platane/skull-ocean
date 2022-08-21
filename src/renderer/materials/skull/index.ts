@@ -78,10 +78,54 @@ const kernel = [
   [-1, 0, 1],
 ];
 
+const kernels = [];
+
+for (let i = 4; i--; ) {
+  kernels.push([
+    [Math.cos((i / 4) * Math.PI * 2), 0, Math.sin((i / 4) * Math.PI * 2)],
+    [0, 1, 0],
+    [
+      Math.cos(((i + 1) / 4) * Math.PI * 2),
+      0,
+      Math.sin(((i + 1) / 4) * Math.PI * 2),
+    ],
+  ]);
+}
+
+kernel.forEach((p) => vec3.normalize(p, p));
+
+type Face = [vec3, vec3, vec3];
+
+const tesselate = (face: Face) => {
+  const m01 = vec3.lerp([], face[0], face[1], 0.5);
+  const m12 = vec3.lerp([], face[1], face[2], 0.5);
+  const m20 = vec3.lerp([], face[2], face[0], 0.5);
+
+  vec3.normalize(m01, m01);
+  vec3.normalize(m12, m12);
+  vec3.normalize(m20, m20);
+
+  return [
+    [m01, m12, m20],
+    [m01, face[1], m12],
+    [m12, face[2], m20],
+    [m20, face[0], m01],
+  ] as Face[];
+};
+
+const tesselateRec = (face: Face, n = 0): Face[] => {
+  if (n <= 0) return [face];
+  return tesselate(face)
+    .map((f) => tesselateRec(f, n - 1))
+    .flat();
+};
+
+const vertices = kernels.map((face) => tesselateRec(face, 4).flat()).flat();
+
 updateGeometry(
-  new Float32Array(kernel.map(() => [240 / 255, 120 / 255, 0 / 255]).flat()),
-  new Float32Array(kernel.map((p) => p).flat()),
+  new Float32Array(vertices.map(() => [240 / 255, 120 / 255, 0 / 255]).flat()),
+  new Float32Array(vertices.map((p) => p).flat()),
   new Float32Array(
-    kernel.map((p) => vec3.normalize(p as vec3, p as vec3) as any).flat()
+    vertices.map((p) => vec3.normalize(p as vec3, p as vec3) as any).flat()
   )
 );

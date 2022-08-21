@@ -1,0 +1,78 @@
+name: main
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: npm run type
+      - run: npm run lint
+      - run: npm run test --ci
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ./dist/*
+
+      - name: generate badge
+        run: |
+          node -e "const s=require('fs').statSync('dist/bundle.zip').size;console.log(JSON.stringify({label:'size',message:(s/1024).toFixed(2)+'K',color:s<13312?'success':'important'}))" > dist/shieldio_size.json
+
+      - name: copy images
+        run: cp -R doc/images dist/images
+
+      - name: deploy to gh-pages
+        uses: crazy-max/ghaction-github-pages@v2
+        if: success() && github.ref == 'refs/heads/master'
+        with:
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  analyze-bundle:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: build
+
+      - name: test the bundle against the report endpoint
+        run: |
+          curl --silent -X POST --max-time 120 --connect-timeout 120 --form bundle=@bundle.zip --form category=desktop https://iw8sii1h9b.execute-api.eu-west-1.amazonaws.com/stage/analyze-bundle > report.json
+          node -e "console.log(JSON.stringify(require('./report.json'),null,2))"
+
+      - name: fails if the report failed
+        run: node -e "for (const c of require('./report.json').checks){if(c.result!=='ok'){console.error(c);throw c.description;}}"

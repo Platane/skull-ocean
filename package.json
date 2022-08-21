@@ -1,0 +1,50 @@
+{
+  "name": "plague-surfing",
+  "repository": "github:platane/js13k-2022",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "gl-matrix": "3.4.3",
+    "park-miller": "2.0.0"
+  },
+  "devDependencies": {
+    "@swc/core": "1.2.241",
+    "@ampproject/rollup-plugin-closure-compiler": "0.27.0",
+    "@babel/core": "7.18.10",
+    "@babel/preset-typescript": "7.18.6",
+    "@rollup/plugin-babel": "5.3.1",
+    "@rollup/plugin-commonjs": "22.0.2",
+    "@rollup/plugin-node-resolve": "13.3.0",
+    "@types/google-closure-compiler": "0.0.19",
+    "@types/html-minifier-terser": "7.0.0",
+    "@types/jest": "28.1.7",
+    "@types/node": "18.7.8",
+    "advzip-bin": "2.0.0",
+    "babel-plugin-transform-define": "2.0.1",
+    "html-minifier-terser": "7.0.0",
+    "jest": "28.1.3",
+    "prettier": "2.7.1",
+    "rollup": "2.78.1",
+    "rollup-pluginutils": "2.8.2",
+    "terser": "5.14.2",
+    "ts-jest": "28.0.8",
+    "ts-node": "10.9.1",
+    "sucrase": "3.25.0",
+    "typescript": "4.7.4",
+    "webpack-glsl-minify": "1.5.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/?(*.)+(spec).ts"
+    ]
+  },
+  "scripts": {
+    "test": "jest --no-cache --passWithNoTests --verbose",
+    "type": "tsc --noEmit",
+    "lint": "prettier -c '**/*.{ts,tsx,js,jsx,json,md}' '!**/{dist,coverage}/**'",
+    "build": "ts-node -T -e \"require('./scripts/build.ts').build()\"",
+    "dev": "ts-node -T -e \"require('./scripts/dev.ts').dev()\""
+  }
+}

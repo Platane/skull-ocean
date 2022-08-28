@@ -8,11 +8,15 @@ const minZoom = 0;
 
 // initialize static perspective matrix
 export const perspectiveMatrix = new Float32Array(4 * 4);
-const fovX = Math.PI / 3;
-const aspect = window.innerWidth / window.innerHeight;
-const near = 0.005;
-const far = 20;
-mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
+export const fovX = Math.PI / 3;
+export const near = 0.005;
+export const far = 20;
+export let aspect = 1;
+export const resize = () => {
+  aspect = window.innerWidth / window.innerHeight;
+  mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
+};
+resize();
 
 // camera primitive
 let phi = 1.2;

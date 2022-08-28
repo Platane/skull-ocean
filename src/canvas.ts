@@ -1,3 +1,5 @@
+// import { resize as resizeCamera } from "./renderer/camera";
+
 export const canvas: HTMLCanvasElement =
   document.getElementsByTagName("canvas")[0];
 
@@ -14,6 +16,7 @@ const resize = () => {
 
   gl.viewport(0, 0, w, h);
 
+  // resizeCamera();
   centerCamera();
 };
 

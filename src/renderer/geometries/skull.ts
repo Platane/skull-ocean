@@ -3,7 +3,7 @@ import { Face } from "./types";
 
 export const createSkullGeometry = () => {
   const faces = createPyramidKernel()
-    .map((face) => tesselateRec(face, 2))
+    .map((face) => tesselateRec(face, 3))
     .flat()
     .map((face) => face.map((p) => vec3.clone(p)));
 

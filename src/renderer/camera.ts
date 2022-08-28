@@ -3,7 +3,7 @@ import { canvas } from "../canvas";
 import { clamp } from "../math/utils";
 import { Handler } from "../controls-type";
 
-const maxZoom = 10;
+const maxZoom = 100;
 const minZoom = 0;
 
 // initialize static perspective matrix

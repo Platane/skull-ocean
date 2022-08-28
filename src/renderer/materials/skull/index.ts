@@ -13,10 +13,12 @@ const colorLocation = getAttributeLocation(gl, program, "aVertexColor");
 const normalLocation = getAttributeLocation(gl, program, "aVertexNormal");
 const positionLocation = getAttributeLocation(gl, program, "aVertexPosition");
 
-const timeLocation = getUniformLocation(gl, program, "uTime");
 const worldMatrixLocation = getUniformLocation(gl, program, "uWorldMatrix");
-
-const s = Date.now();
+const worldInstanceLocation = getUniformLocation(
+  gl,
+  program,
+  "uInstancedMatrix"
+);
 
 const gIndexBuffer = gl.createBuffer();
 const positionBuffer = gl.createBuffer();
@@ -45,12 +47,11 @@ export const updateGeometry = (
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, gIndexes, gl.STATIC_DRAW);
 };
 
-export const draw = (worldMatrix: Float32Array) => {
+export const draw = (worldMatrix: Float32Array, matrix: Float32Array) => {
   gl.useProgram(program);
 
   gl.uniformMatrix4fv(worldMatrixLocation, false, worldMatrix);
-
-  gl.uniform1f(timeLocation, (Date.now() - s) / 1000);
+  gl.uniformMatrix4fv(worldInstanceLocation, false, matrix);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gIndexBuffer);
 

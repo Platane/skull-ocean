@@ -1,5 +1,5 @@
 import { vec3 } from "gl-matrix";
-import { clamp } from "../../math/utils";
+import { Face } from "./types";
 
 export const createSkullGeometry = () => {
   const faces = createPyramidKernel()
@@ -10,8 +10,12 @@ export const createSkullGeometry = () => {
   return faces as Face[];
 };
 
-type Face = [vec3, vec3, vec3];
-
+/**
+ * create the primitive of a recursive sphere
+ * some kind of double pyramid
+ *
+ * returns an array of oriented faces
+ */
 const createPyramidKernel = () => {
   const faces: Face[] = [];
 
@@ -39,6 +43,11 @@ const createPyramidKernel = () => {
   return faces;
 };
 
+/**
+ * tesselate face a face, assuming it's part of the unit sphere
+ *
+ * returns an array of oriented faces
+ */
 const tesselate = (face: Face) => {
   const m01 = vec3.lerp(vec3.create(), face[0], face[1], 0.5);
   const m12 = vec3.lerp(vec3.create(), face[1], face[2], 0.5);

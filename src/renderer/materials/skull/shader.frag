@@ -1,6 +1,6 @@
 precision highp float;
 
-varying lowp vec3 vColor;
+// varying lowp vec3 vColor;
 varying lowp vec3 vNormal;
 
 
@@ -8,6 +8,7 @@ varying lowp vec3 vNormal;
 void main(void) {
 
   
+  vec3 vColor = vec3(0.3,0.8,0.4);
 
   vec3 staticLightDirection = vec3(1.0,0.8,1.0);
   normalize(staticLightDirection);

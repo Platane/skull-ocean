@@ -10,7 +10,7 @@ const minZoom = 0;
 export const perspectiveMatrix = new Float32Array(4 * 4);
 export const fovX = Math.PI / 3;
 export const near = 0.005;
-export const far = 20;
+export const far = 2000;
 export let aspect = window.innerWidth / window.innerHeight;
 mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
 
@@ -69,7 +69,7 @@ const rotateMove: Handler = ([{ pageX: x, pageY: y }]) => {
     theta -= (dx / window.innerHeight) * rotationSpeed;
     phi -= (dy / window.innerHeight) * rotationSpeed;
 
-    phi = clamp(phi, Math.PI / 5, (2.2 * Math.PI) / 5);
+    phi = clamp(phi, Math.PI * 0.1, Math.PI * 0.9);
 
     px = x;
     py = y;

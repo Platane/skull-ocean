@@ -1,6 +1,5 @@
 import { createFilter } from "rollup-pluginutils";
 import { Plugin, TransformHook } from "rollup";
-import { GlslMinify } from "webpack-glsl-minify/build/minify";
 
 export const glsl = (
   opts: {
@@ -15,13 +14,15 @@ export const glsl = (
 
   const filter = createFilter(opts.include, opts.exclude);
 
-  const minifier = new GlslMinify({ preserveUniforms: true });
-
-  const transform: TransformHook = async (code, id) => {
+  const transform: TransformHook = (code, id) => {
     if (filter(id)) {
       if (opts.compress) {
-        const shader = await minifier.execute(code);
-        code = code.replace(/\s*\n\s*/g, "\n").replace(/[\t ]+/g, " ");
+        code = code
+          .replace(/\s*\n\s*/g, "\n")
+          .replace(/[\t ]+/g, " ")
+          .replace(/[^\w]([ \n])+/g, (a) => a.trim())
+          .replace(/([ \n])+[^\w]/g, (a) => a.trim())
+          .trim();
       }
 
       return {

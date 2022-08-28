@@ -73,7 +73,8 @@ export const createRollupInputOptions = (production: boolean) =>
 
       glsl({
         include: ["**/*.frag", "**/*.vert"],
-        compress: production,
+        // compress: production,
+        compress: true,
       }),
 
       ...(production

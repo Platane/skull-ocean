@@ -28,7 +28,6 @@
     "rollup-pluginutils": "2.8.2",
     "terser": "5.14.2",
     "ts-jest": "28.0.8",
-    "ts-node": "10.9.1",
     "sucrase": "3.25.0",
     "typescript": "4.7.4",
     "webpack-glsl-minify": "1.5.0"
@@ -44,7 +43,7 @@
     "test": "jest --no-cache --passWithNoTests --verbose",
     "type": "tsc --noEmit",
     "lint": "prettier -c '**/*.{ts,tsx,js,jsx,json,md}' '!**/{dist,coverage}/**'",
-    "build": "ts-node -T -e \"require('./scripts/build.ts').build()\"",
-    "dev": "ts-node -T -e \"require('./scripts/dev.ts').dev()\""
+    "build": "node -e \"require('sucrase/register');require('./scripts/build.ts').build()\"",
+    "dev": "node -e \"require('sucrase/register');require('./scripts/dev.ts').dev()\""
   }
 }

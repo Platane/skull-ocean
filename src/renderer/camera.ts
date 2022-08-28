@@ -11,12 +11,8 @@ export const perspectiveMatrix = new Float32Array(4 * 4);
 export const fovX = Math.PI / 3;
 export const near = 0.005;
 export const far = 20;
-export let aspect = 1;
-export const resize = () => {
-  aspect = window.innerWidth / window.innerHeight;
-  mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
-};
-resize();
+export let aspect = window.innerWidth / window.innerHeight;
+mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
 
 // camera primitive
 let phi = 1.2;
@@ -131,6 +127,17 @@ canvas.addEventListener(
   "wheel",
   (event) => {
     zoom = clamp(zoom + (event.deltaY < 0 ? -1 : 1), minZoom, maxZoom);
+
+    update();
+  },
+  { passive: true }
+);
+
+window.addEventListener(
+  "resize",
+  () => {
+    aspect = window.innerWidth / window.innerHeight;
+    mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
 
     update();
   },

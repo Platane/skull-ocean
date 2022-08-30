@@ -1,7 +1,6 @@
 const wait = (delay = 0) => new Promise((r) => setTimeout(r, delay));
 
-const getCompilationHash = () =>
-  fetch("/dist/bundle.js").then((res) => res.text());
+const getCompilationHash = () => fetch("bundle.js").then((res) => res.text());
 
 if (process.env.NODE_ENV !== "production")
   (async () => {

@@ -24,35 +24,29 @@ export const packGeometry = async () => {
   const positions = geometry.getAttribute("position")!;
   const indexes = geometry.getIndex()!;
 
-  const vertices = Array.from(indexes.array).map((i) => [
-    positions.getX(i),
-    positions.getY(i),
-    positions.getZ(i),
-  ]);
+  const vertices = Array.from(indexes.array).map(
+    (i) =>
+      new THREE.Vector3(positions.getX(i), positions.getY(i), positions.getZ(i))
+  );
+
+  const c = geometry.boundingBox!.getCenter(new THREE.Vector3());
+  const s = geometry.boundingBox!.getSize(new THREE.Vector3());
+
+  const r = Math.max(s.x, s.y, s.z);
+  const m = new THREE.Matrix4().makeTranslation(-c.x, -c.y, -c.z);
 
   // scale in a 1x1x1 cube
-  const uVertices = vertices.map(([x, y, z]) => [
-    MathUtils.inverseLerp(
-      geometry.boundingBox!.min.x,
-      geometry.boundingBox!.max.x,
-      x
-    ),
-
-    MathUtils.inverseLerp(
-      geometry.boundingBox!.min.y,
-      geometry.boundingBox!.max.y,
-      y
-    ),
-
-    MathUtils.inverseLerp(
-      geometry.boundingBox!.min.z,
-      geometry.boundingBox!.max.z,
-      z
-    ),
-  ]);
+  const uVertices = vertices.map((p) =>
+    p
+      .sub(c)
+      .multiplyScalar(1 / r)
+      .add(new THREE.Vector3(0.5, 0.5, 0.5))
+  );
 
   const packed = new Uint16Array(
-    uVertices.map((p) => p.map((x) => Math.floor(x * 256 * 256))).flat()
+    uVertices
+      .map((p) => p.toArray().map((x) => Math.floor(x * 255 * 255)))
+      .flat()
   );
 
   fs.writeFileSync(path.join(__dirname, "../dist/skull-vertices.bin"), packed);

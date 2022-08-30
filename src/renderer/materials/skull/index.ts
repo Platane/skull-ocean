@@ -1,7 +1,7 @@
 import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
 import { getAttributeLocation, getUniformLocation } from "../../utils/location";
-import { createSkullGeometry } from "../../geometries/skull";
+import { createSkullGeometry } from "../../geometries/skull-bin";
 import { getFlatShadingNormals } from "../../utils/flatShading";
 
 import codeFrag from "./shader.frag";
@@ -49,8 +49,9 @@ instanceMatrices.forEach((m, i) => {
   const t = vec3.create();
   vec3.set(t, 0, 0, i * 1);
   mat4.translate(m, m, t);
-  // mat4.rotateY(m, m, (Math.PI * i) / 17);
-  mat4.rotateX(m, m, (Math.PI * i ** 2) / 8);
+  mat4.rotateX(m, m, Math.random() * Math.PI);
+  mat4.rotateY(m, m, Math.random() * Math.PI);
+  mat4.rotateZ(m, m, Math.random() * Math.PI);
 });
 
 export const updateGeometry = (
@@ -130,8 +131,8 @@ const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
   return acc;
 };
 
-{
-  const vertices = createSkullGeometry().flat();
+(async () => {
+  const vertices = (await createSkullGeometry()).flat();
   const positions = new Float32Array(flat(vertices));
   const colors = new Float32Array(
     vertices.map(() => [240 / 255, 120 / 255, 0 / 255]).flat()
@@ -140,4 +141,4 @@ const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
   const normals = getFlatShadingNormals(indexes, positions);
 
   updateGeometry(colors, positions, normals);
-}
+})();

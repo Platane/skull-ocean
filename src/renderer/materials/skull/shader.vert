@@ -11,7 +11,7 @@ uniform mat4 uWorldMatrix;
 // attribute vec4 aVertexColor;
 attribute mat4 aInstancedMatrix;
 
-// varying lowp vec3 vColor;
+varying lowp vec3 vColor;
 varying lowp vec3 vNormal;
 
 void main(void) {
@@ -20,5 +20,6 @@ void main(void) {
 
   vNormal = aVertexNormal;
   
-  // vColor = aVertexColor ;
+  vColor = vec3(0.3,0.8,0.4);
+
 }

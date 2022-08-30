@@ -4,6 +4,7 @@ import * as path from "path";
 import * as http from "http";
 import { watch, RollupWatchOptions } from "rollup";
 import { createRollupInputOptions } from "./build";
+import { packGeometry } from "./pack-geometry";
 
 const rollupWatchOptions: RollupWatchOptions = {
   ...createRollupInputOptions(false),
@@ -15,6 +16,8 @@ const rollupWatchOptions: RollupWatchOptions = {
 };
 
 export const dev = async () => {
+  await packGeometry();
+
   const watcher = await watch([rollupWatchOptions]);
 
   let resolve: null | (() => void);
@@ -49,12 +52,7 @@ export const dev = async () => {
         filePath = path.resolve(__dirname, "..", "src", "index.html");
       } else {
         await promise;
-        filePath = path.resolve(
-          __dirname,
-          "..",
-          "dist",
-          pathname!.split("/dist/").slice(-1)[0]
-        );
+        filePath = path.resolve(__dirname, "..", "dist", pathname!.slice(1));
       }
 
       res.end(fs.readFileSync(filePath));

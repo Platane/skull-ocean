@@ -15,6 +15,7 @@ import advzipBin from "advzip-bin";
 import babelPluginDefine from "babel-plugin-transform-define";
 // @ts-ignore
 import babelPresetTypescript from "@babel/preset-typescript";
+import { packGeometry } from "./pack-geometry";
 
 export const terserOptions: MinifyOptions = {
   compress: {
@@ -73,8 +74,8 @@ export const createRollupInputOptions = (production: boolean) =>
 
       glsl({
         include: ["**/*.frag", "**/*.vert"],
-        // compress: production,
-        compress: true,
+        compress: production,
+        // compress: true,
       }),
 
       ...(production
@@ -118,7 +119,7 @@ export const build = async () => {
 
   const minifiedHtmlContent = await minifyHtml(
     htmlContent.replace(
-      '<script src="../dist/bundle.js"></script>',
+      '<script src="bundle.js"></script>',
       `<script>${code!}</script>`
     ),
     minifyHtmlOptions
@@ -129,6 +130,8 @@ export const build = async () => {
     fs.rmSync(distDir, { recursive: true });
   } catch (err) {}
   fs.mkdirSync(distDir, { recursive: true });
+
+  await packGeometry();
 
   fs.writeFileSync(path.join(distDir, "index.html"), minifiedHtmlContent);
 

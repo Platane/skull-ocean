@@ -3,7 +3,6 @@ import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
 import {
   getAttributeLocation,
-  getUniformLocation,
   instancePointerMatrix4fv,
 } from "../../utils/location";
 import { createSkullGeometry } from "../../geometries/skull";
@@ -12,7 +11,7 @@ import { getFlatShadingNormals } from "../../utils/flatShading";
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
 import { nParticles } from "../../../particles";
-import { worldMatrixBuffer } from "./transform";
+import { normalTransformMatrixBuffer, worldMatrixBuffer } from "./transform";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
@@ -22,8 +21,11 @@ const positionLocation = getAttributeLocation(gl, program, "aVertexPosition");
 
 // instance varying attributes
 const worldMatrixLocation = getAttributeLocation(gl, program, "aWorldMatrix");
-// const worldNMatrixLocation = getAttributeLocation(gl, program, "aWorldNMatrix");
-// const colorLocation = getAttributeLocation(gl, program, "aVertexColor");
+const normalTransformMatrixLocation = getAttributeLocation(
+  gl,
+  program,
+  "aNormalTransformMatrix"
+);
 
 const positionBuffer = gl.createBuffer();
 const normalBuffer = gl.createBuffer();
@@ -52,6 +54,9 @@ export const draw = () => {
   gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
   instancePointerMatrix4fv(gl, worldMatrixLocation);
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalTransformMatrixBuffer);
+  instancePointerMatrix4fv(gl, normalTransformMatrixLocation);
+
   //
   // attributes
   //
@@ -65,12 +70,7 @@ export const draw = () => {
   //
   // draw
   //
-  gl.drawArraysInstanced(
-    gl.TRIANGLES,
-    0, // offset
-    nVerticesInstance, // num vertices per instance
-    nParticles // num instances
-  );
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, nVerticesInstance, nParticles);
 };
 
 // // //

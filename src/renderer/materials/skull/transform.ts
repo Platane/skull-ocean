@@ -27,7 +27,7 @@ export const updateTransform = () => {
     mat4.multiply(worldMatrices[i], perspectiveMatrix, transformMatrix);
 
     // set the normal transform matrix
-    mat4.invert(transformMatrix, normalTransformMatrices[i]);
+    mat4.invert(normalTransformMatrices[i], transformMatrix);
     mat4.transpose(normalTransformMatrices[i], normalTransformMatrices[i]);
   }
 

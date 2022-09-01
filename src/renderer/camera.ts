@@ -8,10 +8,10 @@ const minZoom = 0;
 
 // initialize static perspective matrix
 export const perspectiveMatrix = new Float32Array(4 * 4);
-export const fovX = Math.PI / 3;
-export const near = 0.005;
-export const far = 2000;
-export let aspect = window.innerWidth / window.innerHeight;
+const fovX = Math.PI / 3;
+const near = 0.005;
+const far = 2000;
+let aspect = window.innerWidth / window.innerHeight;
 mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
 
 // camera primitive
@@ -19,20 +19,16 @@ let phi = 1.2;
 let theta = 1;
 let zoom = Math.floor((maxZoom + minZoom) / 2);
 const rotationSpeed = 3;
-export const lookAtPoint: vec3 = [0, 0, 0];
-export const eye: vec3 = [0, 0, 1];
+const lookAtPoint: vec3 = [0, 0, 0];
+const eye: vec3 = [0, 0, 1];
 
-export const UP: vec3 = [0, 1, 0];
+const UP: vec3 = [0, 1, 0];
 
 // lookAtMatrix, build from the camera
 export const lookAtMatrix = new Float32Array(4 * 4);
 
 // combination or perspective and lookAt matrices
 export const worldMatrix = new Float32Array(4 * 4);
-
-// inverse of the 3x3 lookAt matrix
-// used for bill boarding
-export const lookAtMatrix3Inv = new Float32Array(3 * 3);
 
 const update = () => {
   const radius = 2 + 0.8 + zoom * 0.09;
@@ -44,9 +40,6 @@ const update = () => {
   mat4.lookAt(lookAtMatrix, eye, lookAtPoint, UP);
 
   mat4.multiply(worldMatrix, perspectiveMatrix, lookAtMatrix);
-
-  mat3.fromMat4(lookAtMatrix3Inv, lookAtMatrix);
-  mat3.invert(lookAtMatrix3Inv, lookAtMatrix3Inv);
 };
 
 update();

@@ -8,8 +8,8 @@ const c: vec3 = [0, 0, 0];
 const n: vec3 = [0, 0, 0];
 
 export const getFlatShadingNormals = (
-  indexes: Uint16Array,
-  positions: Float32Array
+  indexes: ArrayLike<number>,
+  positions: ArrayLike<number>
 ) => {
   const normals = new Float32Array(positions.length);
 

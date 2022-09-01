@@ -3,6 +3,7 @@ import { gl } from "../../../canvas";
 import { getAttributeLocation, getUniformLocation } from "../../utils/location";
 import { createSkullGeometry } from "../../geometries/skull";
 import { inflate } from "../../geometries/inflate";
+import { worldMatrix } from "../../camera";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
@@ -36,7 +37,7 @@ export const updateGeometry = (
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, gIndexes, gl.STATIC_DRAW);
 };
 
-export const draw = (worldMatrix: Float32Array) => {
+export const draw = () => {
   gl.useProgram(program);
 
   gl.uniformMatrix4fv(worldMatrixLocation, false, worldMatrix);

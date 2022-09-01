@@ -1,8 +1,9 @@
 import { mat4, vec3 } from "gl-matrix";
 import { gl } from "../canvas";
-import { worldMatrix } from "./camera";
+import { updateTransform as updateSkullTransform } from "./materials/skull/transform";
 import { draw as drawSkull } from "./materials/skull";
-import { draw as drawSkullOutline } from "./materials/skull-outline";
+import { draw as drawGizmo } from "./materials/gizmo";
+// import { draw as drawSkullOutline } from "./materials/skull-outline";
 
 gl.clearColor(0, 0, 0, 0);
 gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -21,14 +22,11 @@ export const render = () => {
   // clear canvas
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  // object transform
-  const matrix = mat4.create();
-  mat4.identity(matrix);
-  const t = vec3.create();
-  vec3.set(t, 0, 0.42, 0.5);
-  mat4.translate(matrix, matrix, t);
+  // update transform buffer
+  updateSkullTransform();
 
   // draw
-  drawSkullOutline(worldMatrix);
-  drawSkull(worldMatrix, matrix as Float32Array);
+  // drawSkullOutline();
+  drawSkull();
+  drawGizmo();
 };

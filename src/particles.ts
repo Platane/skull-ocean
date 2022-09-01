@@ -1,6 +1,6 @@
 import { quat, vec3 } from "gl-matrix";
 
-export const nParticles = 5;
+export const nParticles = 500;
 
 export const particles = Array.from({ length: nParticles }, (_, i) => ({
   position: vec3.set(
@@ -19,5 +19,6 @@ export const particles = Array.from({ length: nParticles }, (_, i) => ({
     [0.4, 0.1, 0.7],
     [0.4, 0.2, 0.4],
     [0.3, 0.6, 0.1],
-  ][Math.floor(Math.random() * 3)],
+    [0.8, 0.4, 0.3],
+  ][Math.floor(Math.random() * 4)],
 }));

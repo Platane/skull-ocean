@@ -27,7 +27,9 @@ export const getUniformLocation = (
 };
 
 /**
- * make the current buffer point to an attribute that change for each instance
+ * make the current buffer point to a matrix4f attribute that change for each instance
+ *
+ * I mostly don't understand what's going on, copy/pasted from https://webgl2fundamentals.org/webgl/lessons/webgl-instanced-drawing.html
  */
 export const instancePointerMatrix4fv = (
   gl: WebGL2RenderingContext,
@@ -50,4 +52,18 @@ export const instancePointerMatrix4fv = (
     // this line says this attribute only changes for each 1 instance
     gl.vertexAttribDivisor(loc, 1);
   }
+};
+
+/**
+ * make the current buffer point to a vec4f attribute that change for each instance
+ *
+ * I mostly don't understand what's going on, copy/pasted from https://webgl2fundamentals.org/webgl/lessons/webgl-instanced-drawing.html
+ */
+export const instancePointerVec4fv = (
+  gl: WebGL2RenderingContext,
+  attributeLocation: number
+) => {
+  gl.enableVertexAttribArray(attributeLocation);
+  gl.vertexAttribPointer(attributeLocation, 4, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribDivisor(attributeLocation, 1);
 };

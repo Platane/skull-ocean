@@ -1,29 +1,23 @@
-import { mat4, vec3 } from "gl-matrix";
+import { quat, vec3 } from "gl-matrix";
 
 export const nParticles = 5;
 
-export const particlesMatrices = Array.from(
-  { length: nParticles },
-  (_, i) => new Float32Array(4 * 4)
-);
-
-// export const particlesMatrices = Array.from({ length: nParticles }, (_, i) => {
-//   const byteOffsetToMatrix = i * 16 * 4;
-//   const numFloatsForView = 16;
-//   return new Float32Array(
-//     particlesMatrix.buffer,
-//     byteOffsetToMatrix,
-//     numFloatsForView
-//   );
-// });
-
-particlesMatrices.forEach((m, i) => {
-  mat4.identity(m);
-
-  const t = vec3.create();
-  vec3.set(t, 0, 0, i * 1);
-  mat4.translate(m, m, t);
-  mat4.rotateX(m, m, Math.random() * Math.PI);
-  mat4.rotateY(m, m, Math.random() * Math.PI);
-  mat4.rotateZ(m, m, Math.random() * Math.PI);
-});
+export const particles = Array.from({ length: nParticles }, (_, i) => ({
+  position: vec3.set(
+    vec3.create(),
+    (Math.random() - 0.5) * 4,
+    (Math.random() - 0.5) * 4 + 5,
+    (Math.random() - 0.5) * 4
+  ),
+  rotation: quat.fromEuler(
+    quat.create(),
+    Math.random(),
+    Math.random(),
+    Math.random()
+  ),
+  color: [
+    [0.4, 0.1, 0.7],
+    [0.4, 0.2, 0.4],
+    [0.3, 0.6, 0.1],
+  ][Math.floor(Math.random() * 3)],
+}));

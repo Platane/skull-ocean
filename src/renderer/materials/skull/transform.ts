@@ -1,6 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
 import { gl } from "../../../canvas";
-import { nParticles, particlesMatrices } from "../../../particles";
+import { nParticles, particles } from "../../../particles";
 import { lookAtMatrix, perspectiveMatrix } from "../../camera";
 
 export const worldMatrixBuffer = gl.createBuffer();
@@ -22,8 +22,11 @@ const transformMatrix = mat4.create();
 
 export const updateTransform = () => {
   for (let i = nParticles; i--; ) {
+    const { position, rotation } = particles[i];
+
     // set the world matrix
-    mat4.multiply(transformMatrix, lookAtMatrix, particlesMatrices[i]);
+    mat4.fromRotationTranslation(transformMatrix, rotation, position);
+    mat4.multiply(transformMatrix, lookAtMatrix, transformMatrix);
     mat4.multiply(worldMatrices[i], perspectiveMatrix, transformMatrix);
 
     // set the normal transform matrix

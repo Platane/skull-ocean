@@ -18,8 +18,16 @@ export const glsl = (
     if (filter(id)) {
       if (opts.compress) {
         code = code
+          // remove comment
+          .replace(/\/\/[^\n]*/g, "\n")
+
+          // pack multiple line break
           .replace(/\s*\n\s*/g, "\n")
+
+          // pack white spaces
           .replace(/[\t ]+/g, " ")
+
+          // remove white spaces when not between two words
           .replace(/[^\w]([ \n])+/g, (a) => a.trim())
           .replace(/([ \n])+[^\w]/g, (a) => a.trim())
           .trim();

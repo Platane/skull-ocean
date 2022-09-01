@@ -16,6 +16,11 @@ import babelPluginDefine from "babel-plugin-transform-define";
 // @ts-ignore
 import babelPresetTypescript from "@babel/preset-typescript";
 import { packGeometry } from "./pack-geometry";
+import {
+  createRollupInputOptions,
+  minifyHtmlOptions,
+  rollupOutputOptions,
+} from "./rollup-config";
 
 export const terserOptions: MinifyOptions = {
   compress: {
@@ -35,67 +40,6 @@ export const terserOptions: MinifyOptions = {
   mangle: { properties: true, toplevel: true },
   ecma: 2020,
   toplevel: true,
-};
-
-export const minifyHtmlOptions = {
-  collapseWhitespace: true,
-  useShortDoctype: true,
-  minifyCSS: true,
-};
-
-export const createRollupInputOptions = (production: boolean) =>
-  ({
-    input: path.resolve(__dirname, "..", "src", "index.ts"),
-
-    plugins: [
-      commonjs(),
-
-      resolve({
-        extensions: [".ts", ".js"],
-      }),
-
-      babel({
-        babelHelpers: "bundled",
-        babelrc: false,
-        extensions: [".ts", ".js"],
-        presets: [
-          //
-          babelPresetTypescript,
-        ],
-        plugins: [
-          [
-            babelPluginDefine,
-            {
-              "process.env.NODE_ENV": production ? "production" : "dev",
-            },
-          ],
-        ],
-      }),
-
-      glsl({
-        include: ["**/*.frag", "**/*.vert"],
-        compress: production,
-        // compress: true,
-      }),
-
-      ...(production
-        ? [
-            compiler({
-              language_in: "ECMASCRIPT_2020",
-              language_out: "ECMASCRIPT_2020",
-              compilation_level: "ADVANCED",
-              // assume_function_wrapper: true,
-            }),
-          ]
-        : []),
-    ],
-  } as InputOptions);
-
-export const rollupOutputOptions: RollupOptions = {
-  output: {
-    format: "es",
-    sourcemap: false,
-  },
 };
 
 const formatSize = (s: number) => (s / 1024).toFixed(2) + "K";

@@ -3,8 +3,8 @@ import * as url from "url";
 import * as path from "path";
 import * as http from "http";
 import { watch, RollupWatchOptions } from "rollup";
-import { createRollupInputOptions } from "./build";
 import { packGeometry } from "./pack-geometry";
+import { createRollupInputOptions } from "./rollup-config";
 
 const rollupWatchOptions: RollupWatchOptions = {
   ...createRollupInputOptions(false),

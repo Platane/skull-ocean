@@ -62,7 +62,7 @@ const rotateMove: Handler = ([{ pageX: x, pageY: y }]) => {
     theta -= (dx / window.innerHeight) * rotationSpeed;
     phi -= (dy / window.innerHeight) * rotationSpeed;
 
-    phi = clamp(phi, Math.PI * 0.1, Math.PI * 0.9);
+    phi = clamp(phi, Math.PI * 0.01, Math.PI * 0.99);
 
     px = x;
     py = y;

@@ -1,20 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
-import commonjs from "@rollup/plugin-commonjs";
-import resolve from "@rollup/plugin-node-resolve";
-import babel from "@rollup/plugin-babel";
-import { rollup, InputOptions, RollupOptions } from "rollup";
+import { rollup } from "rollup";
 import { minify as minifyHtml } from "html-minifier-terser";
 import { minify, MinifyOptions } from "terser";
-import compiler from "@ampproject/rollup-plugin-closure-compiler";
 import { execFileSync } from "child_process";
-import { glsl } from "./rollup-plugin-glsl";
 // @ts-ignore
 import advzipBin from "advzip-bin";
-// @ts-ignore
-import babelPluginDefine from "babel-plugin-transform-define";
-// @ts-ignore
-import babelPresetTypescript from "@babel/preset-typescript";
 import { packGeometry } from "./pack-geometry";
 import {
   createRollupInputOptions,

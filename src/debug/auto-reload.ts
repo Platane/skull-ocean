@@ -9,6 +9,12 @@ if (process.env.NODE_ENV !== "production")
     while (true) {
       await wait(1000);
 
-      if ((await getCompilationHash()) !== hash) window.location.reload();
+      await getCompilationHash()
+        .then((h) => {
+          if (h !== hash) window.location.reload();
+        })
+        .catch((err) => {
+          // silence
+        });
     }
   })();

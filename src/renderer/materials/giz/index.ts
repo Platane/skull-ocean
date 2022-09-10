@@ -4,28 +4,23 @@ import { gl } from "../../../canvas";
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
 import { getAttributeLocation } from "../../utils/location";
+import { mat4, vec3 } from "gl-matrix";
+import { worldMatrix } from "../../camera";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
-// look up where the vertex data needs to go.
-// var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 var positionAttributeLocation = getAttributeLocation(gl, program, "a_position");
 
-// Create a buffer and put three 2d clip space points in it
 var positionBuffer = gl.createBuffer();
 
-// Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-var positions = [
+const positions = [
   //
-  0.8, 0.9,
+  [0.8, 0.9, 0.0],
   //
-  0, 0.9,
+  [0, 0.9, 0.0],
   //
-  0.8, 0.3,
+  [0.8, 0.3, 0.0],
 ];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
 // Create a vertex array object (attribute state)
 var vao = gl.createVertexArray();
@@ -33,13 +28,30 @@ var vao = gl.createVertexArray();
 // and make it the one we're currently working with
 gl.bindVertexArray(vao);
 
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
 // Turn on the attribute
 gl.enableVertexAttribArray(positionAttributeLocation);
 
 // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
 
 export const draw = () => {
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array(
+      positions
+        .map((v) => {
+          const out: number[] = [];
+          vec3.transformMat4(out as any, v as any, worldMatrix);
+          return out;
+        })
+        .flat()
+    ),
+    gl.STATIC_DRAW
+  );
+
   // Tell it to use our program (pair of shaders)
   gl.useProgram(program);
 

@@ -1,8 +1,10 @@
 import { mat4, vec3 } from "gl-matrix";
 import { gl } from "../canvas";
-import { draw as drawFlat } from "./materials/flat";
 import { updateTransform as updateSkullTransform } from "./materials/skull/transform";
-// import { draw as drawGizmo } from "./materials/gizmo";
+
+import { draw as drawFlat } from "./materials/flat";
+import { draw as drawGizmo } from "./materials/gizmo";
+import { draw as drawGiz } from "./materials/giz";
 // import { draw as drawSkull } from "./materials/skull";
 // import { draw as drawSkullOutline } from "./materials/skull-outline";
 
@@ -22,6 +24,7 @@ export const render = () => {
   // draw
   drawFlat();
   // drawGizmo();
+  drawGiz();
   // drawSkull();
   // drawSkullOutline();
 };

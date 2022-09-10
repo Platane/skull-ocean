@@ -27,9 +27,10 @@ const getVertices = async () => {
 
   return vertices;
 };
+let p: Promise<Float32Array>;
 
 export const createOutlineGeometry = async () => {
-  const allVertices = await getVertices();
+  const allVertices = await (p || (p = getVertices()));
 
   const hullVertices = new Float32Array(
     allVertices.buffer,
@@ -45,7 +46,7 @@ export const createOutlineGeometry = async () => {
 };
 
 export const createSkullGeometry = async () => {
-  const allVertices = await getVertices();
+  const allVertices = await (p || (p = getVertices()));
 
   const positions = new Float32Array(
     allVertices.buffer,

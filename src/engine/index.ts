@@ -25,15 +25,17 @@ const setQuat = (arr: Float32Array, i: number, q: quat) => {
 
 //
 
-export const nParticles = 600;
+export const nParticles = 1200;
 
 export const positions = new Float32Array(nParticles * 3);
 export const rotations = new Float32Array(nParticles * 4);
 
+const s = 7;
+
 for (let i = nParticles; i--; ) {
-  positions[i * 3 + 0] = Math.random() - 0.5;
-  positions[i * 3 + 1] = Math.random() * 0.3 + 1;
-  positions[i * 3 + 2] = Math.random() - 0.5;
+  positions[i * 3 + 0] = (Math.random() - 0.5) * s * 4;
+  positions[i * 3 + 1] = Math.random() * 1 + 1;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * s * 4;
 
   const r = quat.fromEuler(
     quat.create(),
@@ -51,6 +53,8 @@ const velocitiesRot = new Float32Array(nParticles * 4);
 
 const acceleration = new Float32Array(nParticles * 3);
 
+const q = quat.create();
+
 const p = vec3.create();
 const u = vec3.create();
 const v = vec3.create();
@@ -60,38 +64,44 @@ const a2 = vec3.create();
 
 let tideX = 0;
 let t = 0;
-const s = 10;
 
 const ITEM_RADIUS = 0.5;
 
 const collision_planes = [
   //
-  { n: [0, 0, 1] as vec3, d: -1, p: vec3.create() },
-  { n: [0, 0, -1] as vec3, d: -1, p: vec3.create() },
-  { n: [1, 0, 0] as vec3, d: -1, p: vec3.create() },
-  { n: [-1, 0, 0] as vec3, d: -1, p: vec3.create() },
+  { n: [0, 0, 1] as vec3, d: -s, p: vec3.create() },
+  { n: [0, 0, -1] as vec3, d: -s, p: vec3.create() },
+  { n: [1, 0, 0] as vec3, d: -s, p: vec3.create() },
+  { n: [-1, 0, 0] as vec3, d: -s, p: vec3.create() },
 ];
 for (const plane of collision_planes) {
   vec3.scaleAndAdd(plane.p, plane.p, plane.n, plane.d);
 }
 
+let generation = 1;
+
 export const step = (dt: number) => {
   t += dt;
+  generation = (generation + 1) % 1024;
 
   acceleration.fill(0);
 
-  tideX = ((tideX + dt * 10 + s) % (s * 2)) - s;
+  tideX = ((tideX + dt * 5 + s * 1.6) % (s * 2 * 1.6)) - s * 1.6;
 
-  for (let i = nParticles; i--; ) {
+  for (let i = 0; i < nParticles; i++) {
     getVec3(p, positions, i);
 
     // solid friction
-    velocities[i * 3 + 0] *= 0.95;
-    velocities[i * 3 + 1] *= 0.95;
-    velocities[i * 3 + 2] *= 0.95;
+    acceleration[i * 3 + 0] += (-velocities[i * 3 + 0] * 0.03) / dt;
+    acceleration[i * 3 + 1] += (-velocities[i * 3 + 1] * 0.03) / dt;
+    acceleration[i * 3 + 2] += (-velocities[i * 3 + 2] * 0.03) / dt;
+
+    // getQuat(q, velocitiesRot, i);
+    // quat.scale(q, q, 0.99);
+    // setQuat(velocitiesRot, i, q);
 
     // gravity
-    acceleration[i * 3 + 1] -= 5;
+    acceleration[i * 3 + 1] -= 6;
 
     // underwater
     if (p[1] < 0) {
@@ -103,7 +113,7 @@ export const step = (dt: number) => {
       const d = Math.min(m, Math.abs(tideX - p[0]));
       const f = ((d - m) / m) ** 2;
 
-      acceleration[i * 3 + 1] -= f * 10;
+      acceleration[i * 3 + 1] -= f * 20;
     }
 
     // wall
@@ -121,7 +131,7 @@ export const step = (dt: number) => {
     }
 
     // push each other
-    for (let j = i; j--; ) {
+    for (let j = 0; j < i; j++) {
       getVec3(u, positions, j);
 
       const dSquare = vec3.sqrDist(p, u);

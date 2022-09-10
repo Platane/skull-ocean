@@ -1,7 +1,17 @@
-import { vec3 } from "gl-matrix";
-import { Face } from "./types";
+import { getFlatShadingNormals } from "../utils/flatShading";
+import { inflate } from "./inflate";
+import { bufferToFaces, facesToBuffer } from "./types";
 
-export const createSkullGeometry = async () => {
+// the mesh is composed of 3 sub-meshes :
+//   the skull, the eye socket, and patches that cover the eye socket ( skull + patch is kind of a hull )
+//
+// inside the binary, vertices array are concatenated such as:
+// <--- socket ---><--- skull ---><--- patch --->
+const socketLength = 297;
+const skullLength = 1017;
+const patchLength = 117;
+
+const getVertices = async () => {
   const buffer = await fetch("skull-vertices.bin").then((res) =>
     res.arrayBuffer()
   );
@@ -15,13 +25,41 @@ export const createSkullGeometry = async () => {
     )
   );
 
-  return Array.from(
-    { length: vertices.length / 9 },
-    (_, i) =>
-      [
-        [vertices[i * 9 + 0], vertices[i * 9 + 1], vertices[i * 9 + 2]],
-        [vertices[i * 9 + 3], vertices[i * 9 + 4], vertices[i * 9 + 5]],
-        [vertices[i * 9 + 6], vertices[i * 9 + 7], vertices[i * 9 + 8]],
-      ] as Face
+  return vertices;
+};
+
+export const createOutlineGeometry = async () => {
+  const allVertices = await getVertices();
+
+  const hullVertices = new Float32Array(
+    allVertices.buffer,
+    socketLength * 4,
+    skullLength + patchLength
   );
+
+  const faces = bufferToFaces(hullVertices);
+
+  const positions = new Float32Array(facesToBuffer(inflate(faces, 0.08)));
+
+  return { positions };
+};
+
+export const createSkullGeometry = async () => {
+  const allVertices = await getVertices();
+
+  const positions = new Float32Array(
+    allVertices.buffer,
+    0,
+    skullLength + socketLength
+  );
+
+  // const positions = new Float32Array(
+  //   allVertices.buffer,
+  //   socketLength * 4,
+  //   skullLength + patchLength
+  // );
+
+  const normals = getFlatShadingNormals(positions);
+
+  return { positions, normals };
 };

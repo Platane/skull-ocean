@@ -8,6 +8,7 @@ import { inflate } from "../../geometries/inflate";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
+import { createOutlineGeometry } from "../../geometries/skull-bin";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
@@ -56,15 +57,7 @@ export const draw = () => {
   gl.bindVertexArray(null);
 };
 
-const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
-  for (let i = 0; i < arr.length; i++)
-    for (let j = 0; j < arr[i].length; j++) acc.push(arr[i][j]);
-  return acc;
-};
-
-geometryPromise.then(({ faces }) => {
-  const positions = new Float32Array(flat(inflate(faces, 0.06).flat()));
-
+createOutlineGeometry().then(({ positions }) => {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
 

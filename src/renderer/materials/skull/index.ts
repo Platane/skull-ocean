@@ -7,10 +7,10 @@ import {
   worldMatrixBuffer,
 } from "./transform";
 import { nParticles } from "../../../particles";
-import { geometryPromise } from "./geometry";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
+import { createSkullGeometry } from "../../geometries/skull-bin";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
@@ -85,7 +85,7 @@ export const draw = () => {
   gl.bindVertexArray(null);
 };
 
-geometryPromise.then(({ positions, normals }) => {
+createSkullGeometry().then(({ positions, normals }) => {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
 

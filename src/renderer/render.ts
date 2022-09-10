@@ -20,7 +20,7 @@ export const render = () => {
   updateSkullTransform();
 
   // draw
-  drawFlat();
+  // drawFlat();
   drawGiz();
   drawSkull();
   drawSkullOutline();

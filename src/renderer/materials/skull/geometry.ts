@@ -1,4 +1,4 @@
-import { createSkullGeometry } from "../../geometries/skull";
+import { createSkullGeometry } from "../../geometries/skull-bin";
 import { getFlatShadingNormals } from "../../utils/flatShading";
 
 const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {

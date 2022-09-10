@@ -15,8 +15,8 @@ const loop = () => {
   quat.fromEuler(vR, 0, 0.5, 0.2);
 
   particles.forEach((p) => {
-    p.position[1] = Math.max(p.position[1] - 0.01, 0);
-    quat.multiply(p.rotation, p.rotation, vR);
+    p.position[1] = Math.max(p.position[1] - 0.02, 0);
+    quat.multiply(p.rotation, p.rotation, p.vRotation);
   });
 
   render();

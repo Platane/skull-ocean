@@ -11,9 +11,16 @@ export const particles = Array.from({ length: nParticles }, (_, i) => ({
   ),
   rotation: quat.fromEuler(
     quat.create(),
-    Math.random(),
-    Math.random(),
-    Math.random()
+    //
+    Math.random() * 360,
+    Math.random() * 360,
+    Math.random() * 360
+  ),
+  vRotation: quat.fromEuler(
+    quat.create(),
+    (Math.random() - 0.5) * 3,
+    (Math.random() - 0.5) * 3,
+    (Math.random() - 0.5) * 3
   ),
   color: [
     [0.4, 0.1, 0.7],

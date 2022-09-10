@@ -8,7 +8,6 @@
     "park-miller": "2.0.0"
   },
   "devDependencies": {
-    "rome": "0.8.0-next.ff4153b",
     "three": "0.143.0",
     "three-stdlib": "2.14.3",
     "@types/three": "0.143.2",

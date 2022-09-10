@@ -22,7 +22,6 @@ specifiers:
   prettier: 2.7.1
   rollup: 2.78.1
   rollup-pluginutils: 2.8.2
-  rome: 0.8.0-next.ff4153b
   sucrase: 3.25.0
   terser: 5.14.2
   three: 0.143.0
@@ -34,7 +33,6 @@ specifiers:
 dependencies:
   gl-matrix: 3.4.3
   park-miller: 2.0.0
-  rome: 0.8.0-next.ff4153b
 
 devDependencies:
   '@ampproject/rollup-plugin-closure-compiler': 0.27.0_rollup@2.78.1
@@ -868,54 +866,6 @@ packages:
       picomatch: 2.3.1
       rollup: 2.78.1
     dev: true
-
-  /@rometools/cli-darwin-arm64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-P0BCJyN50Go7U5AG2Ujh8rIwmnaGpOqYqpsmF2J9hRX8zdMiIpYdbmAG6q0B6kibmwYcwS0+JgIdrYn4bl9Hpg==}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@rometools/cli-darwin-x64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-d9PuyMo4Nc16/YrWaskU+2mygYK1+Vg5GjHJswX51fkUsNlVbNFqDtYLce6m1Oe7UAh0GcsViOvF3jw7fDncbQ==}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@rometools/cli-linux-arm64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-evoUPlk5t6LshpGA9bLB1+42sakKZspyAOJP5P5Fp9HQc9Lvg7c3H5dSosSPSsKK3EVk9ClNVNJq9XMKS5qABQ==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@rometools/cli-linux-x64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-vjMS1l32GC1YZC0ed9Ryr85IDYWKb4gcLgLaGTiaGEgB8tjlWAvB4h8IdomT8bJYSYjgdZOHuV5lTJ5pI2VfKg==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@rometools/cli-win32-arm64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-W5sUoDXuE7+bK/hNtafctYT+lfxlLacqeGsw7apFczXa8c7H+SrcHneveTwzl0iUxY2R+XY9wUe4aDa+v+zYlw==}
-    cpu: [arm64]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@rometools/cli-win32-x64/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-zpEhtqM5K3WfxDv2/bgyXOU6R33lfwuDbehM7eMsaRgwMIA7vbLenxX7Y/hpgPqhZ2MpodJhFLuK8m9yIQ7Rxw==}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: false
-    optional: true
 
   /@sinclair/typebox/0.24.28:
     resolution: {integrity: sha512-dgJd3HLOkLmz4Bw50eZx/zJwtBq65nms3N9VBYu5LTjJ883oBFkTyXRlCB/ZGGwqYpJJHA5zW2Ibhl5ngITfow==}
@@ -3864,20 +3814,6 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
-
-  /rome/0.8.0-next.ff4153b:
-    resolution: {integrity: sha512-Hf1gx01l+6JRRKK4XSThLC7d7f8QuFTU5OyaSnGdCd0M//uBVBKSt5b9v9TWK6fT98ZjKMvmMOcZItHwLVJx7g==}
-    engines: {node: '>=14.*'}
-    hasBin: true
-    requiresBuild: true
-    optionalDependencies:
-      '@rometools/cli-darwin-arm64': 0.8.0-next.ff4153b
-      '@rometools/cli-darwin-x64': 0.8.0-next.ff4153b
-      '@rometools/cli-linux-arm64': 0.8.0-next.ff4153b
-      '@rometools/cli-linux-x64': 0.8.0-next.ff4153b
-      '@rometools/cli-win32-arm64': 0.8.0-next.ff4153b
-      '@rometools/cli-win32-x64': 0.8.0-next.ff4153b
-    dev: false
 
   /safe-buffer/5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}

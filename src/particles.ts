@@ -1,13 +1,13 @@
 import { quat, vec3 } from "gl-matrix";
 
-export const nParticles = 500;
+export const nParticles = 10;
 
 export const particles = Array.from({ length: nParticles }, (_, i) => ({
   position: vec3.set(
     vec3.create(),
-    (Math.random() - 0.5) * 4,
-    (Math.random() - 0.5) * 4 + 5,
-    (Math.random() - 0.5) * 4
+    (Math.random() - 0.5) * 6,
+    (Math.random() - 0.5) * 5 + 5,
+    (Math.random() - 0.5) * 6
   ),
   rotation: quat.fromEuler(
     quat.create(),

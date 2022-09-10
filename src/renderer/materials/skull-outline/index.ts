@@ -1,57 +1,60 @@
 import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
-import { getAttributeLocation, getUniformLocation } from "../../utils/location";
-import { createSkullGeometry } from "../../geometries/skull";
+import { instancePointerMatrix4fv } from "../../utils/location";
+import { worldMatrixBuffer } from "../skull/transform";
+import { nParticles } from "../../../particles";
+import { geometryPromise } from "../skull/geometry";
 import { inflate } from "../../geometries/inflate";
-import { worldMatrix } from "../../camera";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
-const positionLocation = getAttributeLocation(gl, program, "aVertexPosition");
+//
+// attributes
+//
 
-const worldMatrixLocation = getUniformLocation(gl, program, "uWorldMatrix");
-const colorLocation = getUniformLocation(gl, program, "uColor");
+const vao = gl.createVertexArray();
+gl.bindVertexArray(vao);
 
-const gIndexBuffer = gl.createBuffer();
-const positionBuffer = gl.createBuffer();
-let n = 0;
-let colorF = new Float32Array();
+//
+// position
+//
+var positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(), gl.STATIC_DRAW);
+const a_position = gl.getAttribLocation(program, "a_position");
+gl.enableVertexAttribArray(a_position);
+gl.vertexAttribPointer(a_position, 3, gl.FLOAT, false, 0, 0);
 
-export const updateGeometry = (
-  positions: Float32Array,
-  color: Float32Array
-) => {
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
+//
+// matrix
+//
+gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
+const a_matrix = gl.getAttribLocation(program, "a_matrix");
+instancePointerMatrix4fv(gl, a_matrix);
 
-  colorF = color;
-  gl.uniform1fv(colorLocation, colorF);
+//
+gl.bindVertexArray(null);
 
-  n = positions.length / 3;
+//
+//
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gIndexBuffer);
-  const gIndexes = new Uint16Array(n).map((_, i) => i);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, gIndexes, gl.STATIC_DRAW);
-};
+let nVerticesInstance = 0;
 
 export const draw = () => {
   gl.useProgram(program);
 
-  gl.uniformMatrix4fv(worldMatrixLocation, false, worldMatrix);
-  gl.uniform3fv(colorLocation, colorF);
+  gl.bindVertexArray(vao);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gIndexBuffer);
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, nVerticesInstance, nParticles);
 
-  gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_SHORT, 0);
+  gl.bindVertexArray(null);
 };
-
-// // //
 
 const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
   for (let i = 0; i < arr.length; i++)
@@ -59,10 +62,11 @@ const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
   return acc;
 };
 
-{
-  const vertices = inflate(createSkullGeometry(), 0.04).flat();
-  const positions = new Float32Array(flat(vertices));
-  const color = new Float32Array([82 / 255, 72 / 255, 40 / 255]);
+geometryPromise.then(({ faces }) => {
+  const positions = new Float32Array(flat(inflate(faces, 0.06).flat()));
 
-  updateGeometry(positions, color);
-}
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
+
+  nVerticesInstance = positions.length / 3;
+});

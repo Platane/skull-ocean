@@ -3,8 +3,8 @@ import { updateTransform as updateSkullTransform } from "./materials/skull/trans
 
 import { draw as drawFlat } from "./materials/flat";
 import { draw as drawGiz } from "./materials/giz";
-// import { draw as drawSkull } from "./materials/skull";
-// import { draw as drawSkullOutline } from "./materials/skull-outline";
+import { draw as drawSkull } from "./materials/skull";
+import { draw as drawSkullOutline } from "./materials/skull-outline";
 
 gl.clearColor(0, 0, 0, 0);
 gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -22,6 +22,6 @@ export const render = () => {
   // draw
   drawFlat();
   drawGiz();
-  // drawSkull();
-  // drawSkullOutline();
+  drawSkull();
+  drawSkullOutline();
 };

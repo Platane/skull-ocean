@@ -3,13 +3,12 @@ import { gl } from "../../../canvas";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
-import { getAttributeLocation } from "../../utils/location";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
 // look up where the vertex data needs to go.
 // var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-var positionAttributeLocation = getAttributeLocation(gl, program, "a_position");
+var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
 // Create a buffer and put three 2d clip space points in it
 var positionBuffer = gl.createBuffer();

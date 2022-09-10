@@ -7,16 +7,13 @@ const b: vec3 = [0, 0, 0];
 const c: vec3 = [0, 0, 0];
 const n: vec3 = [0, 0, 0];
 
-export const getFlatShadingNormals = (
-  indexes: ArrayLike<number>,
-  positions: ArrayLike<number>
-) => {
+export const getFlatShadingNormals = (positions: ArrayLike<number>) => {
   const normals = new Float32Array(positions.length);
 
-  for (let i = 0; i < indexes.length; i += 3) {
-    const ak = indexes[i + 0] * 3;
-    const bk = indexes[i + 1] * 3;
-    const ck = indexes[i + 2] * 3;
+  for (let i = 0; i < positions.length / 3; i += 3) {
+    const ak = (i + 0) * 3;
+    const bk = (i + 1) * 3;
+    const ck = (i + 2) * 3;
 
     vec3.set(a, positions[ak + 0], positions[ak + 1], positions[ak + 2]);
     vec3.set(b, positions[bk + 0], positions[bk + 1], positions[bk + 2]);

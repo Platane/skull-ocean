@@ -23,6 +23,19 @@ const normalTransformMatrices = Array.from(
 
 const transformMatrix = mat4.create();
 
+// use gl.bufferData once, then use bufferSubData which is suppose to be faster
+// ref: http://disq.us/p/2ep12df
+gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, worldMatrix, gl.DYNAMIC_DRAW);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, normalTransformMatrixBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, normalTransformMatrix, gl.DYNAMIC_DRAW);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
 export const updateTransform = () => {
   for (let i = nParticles; i--; ) {
     const { position, rotation, color } = particles[i];
@@ -44,14 +57,11 @@ export const updateTransform = () => {
   }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, worldMatrix, gl.DYNAMIC_DRAW);
-  // gl.bufferSubData(gl.ARRAY_BUFFER, 0, worldMatrix);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, worldMatrix);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, normalTransformMatrixBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, normalTransformMatrix, gl.DYNAMIC_DRAW);
-  // gl.bufferSubData(gl.ARRAY_BUFFER, 0, normalMatrix);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, normalTransformMatrix);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
-  // gl.bufferSubData(gl.ARRAY_BUFFER, 0, normalMatrix);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
 };

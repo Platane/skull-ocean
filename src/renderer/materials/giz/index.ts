@@ -82,6 +82,8 @@ export const draw = () => {
 
   gl.uniformMatrix4fv(u_matrix, false, worldMatrix);
 
+  gl.disable(gl.CULL_FACE);
+
   gl.drawArrays(gl.TRIANGLES, 0, positions.length);
 
   gl.bindVertexArray(null);

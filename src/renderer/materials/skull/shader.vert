@@ -1,24 +1,22 @@
- 
+#version 300 es
 
-
-attribute vec3 aVertexPosition;
-attribute vec3 aVertexNormal;
+// attributes
+in vec4 a_position;
+in vec4 a_normal;
 
 // instancied
-attribute mat4 aWorldMatrix;
-attribute mat4 aNormalTransformMatrix;
-attribute vec4 aColor;
+in vec4 a_color;
+in mat4 a_matrix;
+in mat4 a_normalMatrix;
 
-// varying
-varying lowp vec3 vColor;
-varying lowp vec3 vNormal;
 
-void main(void) {
+out vec3 v_color;
+out vec3 v_normal;
 
-  gl_Position =  aWorldMatrix * vec4(aVertexPosition, 1.0);
 
-  vNormal = vec3(  aNormalTransformMatrix * vec4(aVertexNormal, 1.0));
-  
-  vColor = vec3(aColor);
-
+void main() {
+  gl_Position = a_matrix * a_position;
+  v_normal = vec3(  a_normalMatrix * a_normal);
+  v_color = a_color.rgb;
 }
+

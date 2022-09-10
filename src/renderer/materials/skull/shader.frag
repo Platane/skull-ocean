@@ -1,17 +1,23 @@
+#version 300 es
 precision highp float;
 
-varying lowp vec3 vColor;
-varying lowp vec3 vNormal;
+in vec3 v_color;
+in vec3 v_normal;
 
-void main(void) {
+
+out vec4 outColor;
+
+void main() {
 
   vec3 staticLightDirection = vec3(0.615457,0.492365 ,0.615457);
 
-  float staticLightPower = dot(vNormal, staticLightDirection) ;
+  float staticLightPower = dot(v_normal, staticLightDirection) ;
 
 
-  gl_FragColor = vec4(vColor, 1.0);
+  outColor = vec4(v_color, 1.0);
 
-  gl_FragColor.rgb *= 0.6 + clamp(  staticLightPower, -0.47, 10.0 ) * 0.45  ;
+  outColor.rgb *= 0.6 + clamp(  staticLightPower, -0.47, 10.0 ) * 0.45  ;
 
+  
 }
+

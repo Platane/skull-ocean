@@ -1,13 +1,15 @@
- 
+#version 300 es
+
+// attributes
+in vec4 a_position;
+
+// instancied
+in mat4 a_matrix;
 
 
-attribute vec3 aVertexPosition;
-
-uniform mat4 uWorldMatrix;
-
-void main(void) {
-
-  gl_Position = uWorldMatrix * vec4(aVertexPosition, 1.0);
-
-
+void main() {
+  
+  gl_Position = a_matrix * a_position;
+  
 }
+

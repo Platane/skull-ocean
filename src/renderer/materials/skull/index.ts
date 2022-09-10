@@ -1,46 +1,91 @@
-import { mat4, vec3 } from "gl-matrix";
 import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
-import {
-  getAttributeLocation,
-  instancePointerMatrix4fv,
-  instancePointerVec4fv,
-} from "../../utils/location";
-import { createSkullGeometry } from "../../geometries/skull";
-import { getFlatShadingNormals } from "../../utils/flatShading";
-
-import codeFrag from "./shader.frag";
-import codeVert from "./shader.vert";
-import { nParticles } from "../../../particles";
+import { instancePointerMatrix4fv } from "../../utils/location";
 import {
   colorBuffer,
   normalTransformMatrixBuffer,
   worldMatrixBuffer,
 } from "./transform";
+import { nParticles } from "../../../particles";
+import { geometryPromise } from "./geometry";
+
+import codeFrag from "./shader.frag";
+import codeVert from "./shader.vert";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
+//
 // attributes
-const normalLocation = getAttributeLocation(gl, program, "aVertexNormal");
-const positionLocation = getAttributeLocation(gl, program, "aVertexPosition");
+//
 
-// instance varying attributes
-const worldMatrixLocation = getAttributeLocation(gl, program, "aWorldMatrix");
-const colorLocation = getAttributeLocation(gl, program, "aColor");
-const normalTransformMatrixLocation = getAttributeLocation(
-  gl,
-  program,
-  "aNormalTransformMatrix"
-);
+const vao = gl.createVertexArray();
+gl.bindVertexArray(vao);
 
-const positionBuffer = gl.createBuffer();
-const normalBuffer = gl.createBuffer();
+//
+// position
+//
+var positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(), gl.STATIC_DRAW);
+const a_position = gl.getAttribLocation(program, "a_position");
+gl.enableVertexAttribArray(a_position);
+gl.vertexAttribPointer(a_position, 3, gl.FLOAT, false, 0, 0);
+
+//
+// normal
+//
+var normalBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(), gl.STATIC_DRAW);
+const a_normal = gl.getAttribLocation(program, "a_normal");
+gl.enableVertexAttribArray(a_normal);
+gl.vertexAttribPointer(a_normal, 3, gl.FLOAT, false, 0, 0);
+
+//
+// color
+//
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+const a_color = gl.getAttribLocation(program, "a_color");
+gl.enableVertexAttribArray(a_color);
+gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, 0, 0);
+gl.vertexAttribDivisor(a_color, 1);
+
+//
+// matrix
+//
+gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
+const a_matrix = gl.getAttribLocation(program, "a_matrix");
+instancePointerMatrix4fv(gl, a_matrix);
+
+//
+// normalMatrix
+//
+gl.bindBuffer(gl.ARRAY_BUFFER, normalTransformMatrixBuffer);
+const a_normalMatrix = gl.getAttribLocation(program, "a_normalMatrix");
+instancePointerMatrix4fv(gl, a_normalMatrix);
+
+//
+gl.bindVertexArray(null);
+
+//
+//
+
 let nVerticesInstance = 0;
 
-export const updateGeometry = (
-  positions: Float32Array,
-  normals: Float32Array
-) => {
+export const draw = () => {
+  gl.useProgram(program);
+
+  gl.bindVertexArray(vao);
+
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
+
+  gl.drawArraysInstanced(gl.TRIANGLES, 0, nVerticesInstance, nParticles);
+
+  gl.bindVertexArray(null);
+};
+
+geometryPromise.then(({ positions, normals }) => {
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
 
@@ -48,54 +93,4 @@ export const updateGeometry = (
   gl.bufferData(gl.ARRAY_BUFFER, normals, gl.DYNAMIC_DRAW);
 
   nVerticesInstance = positions.length / 3;
-};
-
-export const draw = () => {
-  gl.useProgram(program);
-
-  //
-  // instance varying attribute
-  //
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);
-  instancePointerMatrix4fv(gl, worldMatrixLocation);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, normalTransformMatrixBuffer);
-  instancePointerMatrix4fv(gl, normalTransformMatrixLocation);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  instancePointerVec4fv(gl, colorLocation);
-
-  //
-  // attributes
-  //
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-  gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
-  //
-  // draw
-  //
-  gl.drawArraysInstanced(gl.TRIANGLES, 0, nVerticesInstance, nParticles);
-};
-
-// // //
-
-const flat = (arr: ArrayLike<ArrayLike<number>>, acc: number[] = []) => {
-  for (let i = 0; i < arr.length; i++)
-    for (let j = 0; j < arr[i].length; j++) acc.push(arr[i][j]);
-  return acc;
-};
-
-(async () => {
-  const vertices = (await createSkullGeometry()).flat();
-  const positions = new Float32Array(flat(vertices));
-
-  const indexes = new Uint16Array(positions.length / 3).map((_, i) => i);
-  const normals = getFlatShadingNormals(indexes, positions);
-
-  updateGeometry(positions, normals);
-})();
+});

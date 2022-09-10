@@ -20,6 +20,12 @@ const positions = [
   [0, 0.9, 0.0],
   //
   [0.8, 0.3, 0.0],
+
+  [0.0, 1.0, 0.0],
+  //
+  [0.0, 0.0, 1.0],
+  //
+  [0.0, 0.0, 0.0],
 ];
 
 // Create a vertex array object (attribute state)
@@ -59,7 +65,7 @@ export const draw = () => {
   gl.bindVertexArray(vao);
 
   // draw
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.drawArrays(gl.TRIANGLES, 0, positions.length);
 
   //
   gl.bindVertexArray(null);

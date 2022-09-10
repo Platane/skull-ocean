@@ -6,11 +6,11 @@ import {
   normalTransformMatrixBuffer,
   worldMatrixBuffer,
 } from "./transform";
+import { createSkullGeometry } from "../../geometries/skull-bin";
 import { nParticles } from "../../../particles";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
-import { createSkullGeometry } from "../../geometries/skull-bin";
 
 const program = createProgram(gl, codeVert, codeFrag);
 

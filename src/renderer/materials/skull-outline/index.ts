@@ -2,13 +2,11 @@ import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
 import { instancePointerMatrix4fv } from "../../utils/location";
 import { worldMatrixBuffer } from "../skull/transform";
+import { createOutlineGeometry } from "../../geometries/skull-bin";
 import { nParticles } from "../../../particles";
-import { geometryPromise } from "../skull/geometry";
-import { inflate } from "../../geometries/inflate";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
-import { createOutlineGeometry } from "../../geometries/skull-bin";
 
 const program = createProgram(gl, codeVert, codeFrag);
 

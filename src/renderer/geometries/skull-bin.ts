@@ -39,7 +39,7 @@ export const createOutlineGeometry = async () => {
 
   const faces = bufferToFaces(hullVertices);
 
-  const positions = new Float32Array(facesToBuffer(inflate(faces, 0.08)));
+  const positions = new Float32Array(facesToBuffer(inflate(faces, 0.1)));
 
   return { positions };
 };

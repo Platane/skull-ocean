@@ -4,21 +4,11 @@ import "./debug/debug";
 
 import "./controls";
 import { render } from "./renderer/render";
-import { createSkullGeometry } from "./renderer/geometries/skull-bin";
-import { particles } from "./particles";
-import { mat4, quat } from "gl-matrix";
 
-createSkullGeometry();
+import { step } from "./engine";
 
 const loop = () => {
-  const vR = quat.create();
-  quat.fromEuler(vR, 0, 0.5, 0.2);
-
-  particles.forEach((p) => {
-    p.position[1] = p.position[1] - 0.02;
-    if (p.position[1] < -7) p.position[1] = 4 + Math.random() * 3;
-    quat.multiply(p.rotation, p.rotation, p.vRotation);
-  });
+  step(1 / 60);
 
   render();
   requestAnimationFrame(loop);

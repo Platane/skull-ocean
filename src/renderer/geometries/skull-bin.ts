@@ -21,7 +21,7 @@ const getVertices = async () => {
   const vertices = new Float32Array(
     Array.from(
       { length: packed.length },
-      (_, i) => packed[i] / (256 * 256) - 0.5
+      (_, i) => (packed[i] / (256 * 256) - 0.5) * 0.95
     )
   );
 

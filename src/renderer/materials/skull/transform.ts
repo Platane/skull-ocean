@@ -1,7 +1,16 @@
-import { mat4, vec3 } from "gl-matrix";
+import { mat4, quat, vec3 } from "gl-matrix";
 import { gl } from "../../../canvas";
-import { nParticles, particles } from "../../../particles";
+import {
+  getQuat,
+  getVec3,
+  nParticles,
+  positions,
+  rotations,
+} from "../../../engine";
+import { getColor } from "../../../engine/color";
 import { lookAtMatrix, perspectiveMatrix } from "../../camera";
+
+export { nParticles } from "../../../engine";
 
 export const worldMatrixBuffer = gl.createBuffer();
 export const normalTransformMatrixBuffer = gl.createBuffer();
@@ -36,9 +45,14 @@ gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
 
 gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+const position = vec3.create();
+const rotation = quat.create();
+const color = [0, 0, 0] as [number, number, number];
 export const updateTransform = () => {
   for (let i = nParticles; i--; ) {
-    const { position, rotation, color } = particles[i];
+    getVec3(position, positions, i);
+    getQuat(rotation, rotations, i);
+    getColor(color, i);
 
     // set the world matrix
     mat4.fromRotationTranslation(transformMatrix, rotation, position);

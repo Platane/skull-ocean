@@ -1,18 +1,19 @@
-export const hslToRgb = (h: number, s: number, l: number) => {
-  var r, g, b;
+export const hslToRgb = (
+  out: [number, number, number],
+  h: number,
+  s: number,
+  l: number
+) => {
+  // if (s == 0) {
+  //   out[0] = out[1] = out[2] = l; // achromatic
+  // } else {
+  var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  var p = 2 * l - q;
 
-  if (s == 0) {
-    r = g = b = l; // achromatic
-  } else {
-    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    var p = 2 * l - q;
-
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-
-  return [r, g, b] as [number, number, number];
+  out[0] = hue2rgb(p, q, h + 1 / 3);
+  out[1] = hue2rgb(p, q, h);
+  out[2] = hue2rgb(p, q, h - 1 / 3);
+  // }
 };
 
 const hue2rgb = (p: number, q: number, t: number) => {

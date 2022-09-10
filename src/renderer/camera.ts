@@ -18,7 +18,7 @@ mat4.perspective(perspectiveMatrix, fovX, aspect, near, far);
 let phi = 1.2;
 let theta = 1;
 let zoom = Math.floor((maxZoom + minZoom) / 2);
-const rotationSpeed = 3;
+const rotationSpeed = 4;
 const lookAtPoint: vec3 = [0, 0, 0];
 const eye: vec3 = [0, 0, 1];
 
@@ -31,7 +31,7 @@ export const lookAtMatrix = new Float32Array(4 * 4);
 export const worldMatrix = new Float32Array(4 * 4);
 
 const update = () => {
-  const radius = 2 + 0.8 + zoom * 0.09;
+  const radius = 2 + 0.8 + zoom * 0.39;
 
   const sinPhiRadius = Math.sin(phi) * radius;
   eye[0] = sinPhiRadius * Math.sin(theta);

@@ -1,9 +1,8 @@
 import { createProgram } from "../../utils/program";
 import { gl } from "../../../canvas";
 import { instancePointerMatrix4fv } from "../../utils/location";
-import { worldMatrixBuffer } from "../skull/transform";
+import { nParticles, worldMatrixBuffer } from "../skull/transform";
 import { createOutlineGeometry } from "../../geometries/skull-bin";
-import { nParticles } from "../../../particles";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";

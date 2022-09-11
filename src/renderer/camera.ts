@@ -2,6 +2,7 @@ import { mat4, vec3, mat3 } from "gl-matrix";
 import { canvas } from "../canvas";
 import { clamp } from "../math/utils";
 import { Handler } from "../controls-type";
+import { updateGeometry as updateHorizonGeometry } from "./materials/horizon";
 
 const maxZoom = 100;
 const minZoom = 0;
@@ -40,6 +41,8 @@ const update = () => {
   mat4.lookAt(lookAtMatrix, eye, lookAtPoint, UP);
 
   mat4.multiply(worldMatrix, perspectiveMatrix, lookAtMatrix);
+
+  updateHorizonGeometry(eye, lookAtPoint);
 };
 
 update();

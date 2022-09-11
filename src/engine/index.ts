@@ -26,21 +26,22 @@ const setQuat = (arr: Float32Array, i: number, q: quat) => {
 
 //
 
-const nDynamic = 800;
-const nUnderneath = 2000;
+const nPhysic = 800;
+const nUnderneath = 2400;
 const nAround = 2000;
 
-export const nParticles = nDynamic + nUnderneath + nAround;
+export const nParticles = nPhysic + nUnderneath + nAround;
 
 export const positions = new Float32Array(nParticles * 3);
 export const rotations = new Float32Array(nParticles * 4);
 
-export const SIZE = 10;
+export const SIZE_PHYSIC = 10;
+export const WORLD_RADIUS = 40;
 
-export const velocities = new Float32Array(nDynamic * 3);
-const velocitiesRot = new Float32Array(nDynamic * 4);
+export const velocities = new Float32Array(nPhysic * 3);
+const velocitiesRot = new Float32Array(nPhysic * 4);
 
-const acceleration = new Float32Array(nDynamic * 3);
+const acceleration = new Float32Array(nPhysic * 3);
 
 const q = quat.create();
 
@@ -58,10 +59,10 @@ const ITEM_RADIUS = 0.5;
 
 const collision_planes = [
   //
-  { n: [0, 0, 1] as vec3, d: -SIZE / 2, p: vec3.create() },
-  { n: [0, 0, -1] as vec3, d: -SIZE / 2, p: vec3.create() },
-  { n: [1, 0, 0] as vec3, d: -SIZE / 2, p: vec3.create() },
-  { n: [-1, 0, 0] as vec3, d: -SIZE / 2, p: vec3.create() },
+  { n: [0, 0, 1] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
+  { n: [0, 0, -1] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
+  { n: [1, 0, 0] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
+  { n: [-1, 0, 0] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
 ];
 for (const plane of collision_planes) {
   vec3.scaleAndAdd(plane.p, plane.p, plane.n, plane.d);
@@ -83,10 +84,10 @@ for (const plane of collision_planes) {
   }
 
   // uniformly spread the dynamic ones
-  for (let i = nDynamic; i--; ) {
-    positions[i * 3 + 0] = (Math.random() - 0.5) * SIZE * 2;
+  for (let i = nPhysic; i--; ) {
+    positions[i * 3 + 0] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
     positions[i * 3 + 1] = Math.random() * 1 + 1;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE * 2;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
   }
 
   const velocities = new Float32Array(Math.max(nUnderneath, nAround) * 3);
@@ -133,30 +134,35 @@ for (const plane of collision_planes) {
     }
   };
 
-  const R = 40;
-
   // layer of background underneath everything
-  for (let i = nDynamic; i < nDynamic + nUnderneath; i++) {
-    const r = R * Math.sqrt(Math.random());
+  for (let i = nPhysic; i < nPhysic + nUnderneath; i++) {
+    const r = WORLD_RADIUS * Math.sqrt(Math.random());
     const theta = Math.random() * 2 * Math.PI;
 
     positions[i * 3 + 0] = Math.sin(theta) * r;
     positions[i * 3 + 1] = -2.8 + Math.random() * 0.8;
     positions[i * 3 + 2] = Math.cos(theta) * r;
   }
-  for (let k = 10; k--; ) tidyLayer(nDynamic, nDynamic + nUnderneath, 0.01);
+  for (let k = 10; k--; ) tidyLayer(nPhysic, nPhysic + nUnderneath, 0.01);
 
   // layer of inert skulls around the dynamics
   for (
-    let i = nDynamic + nUnderneath;
-    i < nDynamic + nUnderneath + nAround;
+    let i = nPhysic + nUnderneath;
+    i < nPhysic + nUnderneath + nAround;
     i++
   ) {
     let x = 0;
     let y = 0;
 
-    while (-SIZE < x && x < SIZE && -SIZE < y && y < SIZE) {
-      const r = R * Math.sqrt(lerp(Math.random(), (SIZE / R) ** 2, 1));
+    while (
+      -SIZE_PHYSIC < x &&
+      x < SIZE_PHYSIC &&
+      -SIZE_PHYSIC < y &&
+      y < SIZE_PHYSIC
+    ) {
+      const r =
+        WORLD_RADIUS *
+        Math.sqrt(lerp(Math.random(), (SIZE_PHYSIC / WORLD_RADIUS) ** 2, 1));
       const theta = Math.random() * 2 * Math.PI;
 
       x = Math.sin(theta) * r;
@@ -169,7 +175,7 @@ for (const plane of collision_planes) {
   }
 
   for (let k = 30; k--; )
-    tidyLayer(nDynamic + nUnderneath, nDynamic + nUnderneath + nAround, 0.5);
+    tidyLayer(nPhysic + nUnderneath, nPhysic + nUnderneath + nAround, 0.5);
 }
 
 let generation = 1;
@@ -180,8 +186,8 @@ export const stepInert = (dt: number) => {
   inertT += dt;
 
   for (
-    let i = nDynamic + nUnderneath;
-    i < nDynamic + nUnderneath + nAround;
+    let i = nPhysic + nUnderneath;
+    i < nPhysic + nUnderneath + nAround;
     i++
   ) {
     const offset = ((i % 103) / 103) * Math.PI * 2;
@@ -201,9 +207,11 @@ export const stepPhysic = (dt: number) => {
 
   acceleration.fill(0);
 
-  tideX = ((tideX + dt * 5 + SIZE * 1.6) % (SIZE * 2 * 1.6)) - SIZE * 1.6;
+  tideX =
+    ((tideX + dt * 5 + SIZE_PHYSIC * 1.6) % (SIZE_PHYSIC * 2 * 1.6)) -
+    SIZE_PHYSIC * 1.6;
 
-  for (let i = 0; i < nDynamic; i++) {
+  for (let i = 0; i < nPhysic; i++) {
     getVec3(p, positions, i);
 
     // solid friction
@@ -278,7 +286,7 @@ export const stepPhysic = (dt: number) => {
     }
   }
 
-  for (let i = nDynamic; i--; ) {
+  for (let i = nPhysic; i--; ) {
     velocities[i * 3 + 0] += dt * acceleration[i * 3 + 0];
     velocities[i * 3 + 1] += dt * acceleration[i * 3 + 1];
     velocities[i * 3 + 2] += dt * acceleration[i * 3 + 2];

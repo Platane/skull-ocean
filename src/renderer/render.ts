@@ -1,11 +1,12 @@
 import { gl } from "../canvas";
 import { updateTransform as updateSkullTransform } from "./materials/skull/transform";
-
+import { updateTransform as updateSurferTransform } from "./materials/surfer/transform";
 import { draw as drawFlat } from "./materials/flat";
 import { draw as drawGiz } from "./materials/giz";
 import { draw as drawSkull } from "./materials/skull";
 import { draw as drawSkullOutline } from "./materials/skull-outline";
 import { draw as drawHorizon } from "./materials/horizon";
+import { draw as drawSurfer } from "./materials/surfer";
 import { draw as drawDebug_CollisionPlane } from "./materials/debug_collisionPlane";
 
 gl.clearColor(0, 0, 0, 0);
@@ -20,12 +21,14 @@ export const render = () => {
 
   // update transform buffer
   updateSkullTransform();
+  updateSurferTransform();
 
   // draw
   // drawFlat();
   drawHorizon();
   // drawDebug_CollisionPlane();
   drawGiz();
+  drawSurfer();
   drawSkull();
   drawSkullOutline();
 };

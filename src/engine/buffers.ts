@@ -12,7 +12,7 @@ export const getQuat = (out: quat, arr: ArrayLike<number>, i: number) => {
   out[2] = arr[i * 4 + 2];
   out[3] = arr[i * 4 + 3];
 };
-export const setV = (arr: Float32Array, i: number, v: vec3) => {
+export const setVec3 = (arr: Float32Array, i: number, v: vec3) => {
   arr[i * 3 + 0] = v[0];
   arr[i * 3 + 1] = v[1];
   arr[i * 3 + 2] = v[2];

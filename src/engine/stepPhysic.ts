@@ -85,6 +85,12 @@ for (let i = 0; i < nPhysic; i++) {
   for (let k = cells1.length; k--; ) grid[cells1[k]].add(i);
 }
 
+const applyForce = (i: number, fv: vec3, s: number) => {
+  acceleration[i * 3 + 0] += fv[0] * s;
+  acceleration[i * 3 + 1] += fv[1] * s;
+  acceleration[i * 3 + 2] += fv[2] * s;
+};
+
 export const stepPhysic = (dt: number) => {
   acceleration.fill(0);
 
@@ -130,9 +136,7 @@ export const stepPhysic = (dt: number) => {
         const m = 0.16;
         const f = 20 * (Math.min(-d, m) / m) ** 2;
 
-        acceleration[i * 3 + 0] += plane.n[0] * f;
-        acceleration[i * 3 + 1] += plane.n[1] * f;
-        acceleration[i * 3 + 2] += plane.n[2] * f;
+        applyForce(i, plane.n, f);
       }
     }
 
@@ -163,13 +167,8 @@ export const stepPhysic = (dt: number) => {
 
             const f = 60 * Math.min(0.25, 1 / (1 - d / (ITEM_RADIUS * 2)));
 
-            acceleration[i * 3 + 0] += v[0] * f;
-            acceleration[i * 3 + 1] += v[1] * f;
-            acceleration[i * 3 + 2] += v[2] * f;
-
-            acceleration[j * 3 + 0] -= v[0] * f;
-            acceleration[j * 3 + 1] -= v[1] * f;
-            acceleration[j * 3 + 2] -= v[2] * f;
+            applyForce(i, v, f);
+            applyForce(j, v, -f);
 
             // push up
             if (p[1] > u[1]) acceleration[i * 3 + 1] += 0.7 * f;
@@ -179,8 +178,10 @@ export const stepPhysic = (dt: number) => {
   }
 
   for (let i = nPhysic; i--; ) {
+    // save the previous cells
     getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);
 
+    // step the position
     velocities[i * 3 + 0] += dt * acceleration[i * 3 + 0];
     velocities[i * 3 + 1] += dt * acceleration[i * 3 + 1];
     velocities[i * 3 + 2] += dt * acceleration[i * 3 + 2];
@@ -189,8 +190,8 @@ export const stepPhysic = (dt: number) => {
     positions[i * 3 + 1] += dt * velocities[i * 3 + 1];
     positions[i * 3 + 2] += dt * velocities[i * 3 + 2];
 
+    // check if the cell have changed
     getCells(cells2, positions[i * 3 + 0], positions[i * 3 + 2]);
-
     if (
       cells1[0] !== cells2[0] ||
       cells1[1] !== cells2[1] ||

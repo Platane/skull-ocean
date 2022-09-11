@@ -26,7 +26,7 @@ const setQuat = (arr: Float32Array, i: number, q: quat) => {
 
 //
 
-const nPhysic = 800;
+const nPhysic = 600;
 const nUnderneath = 2400;
 const nAround = 2000;
 
@@ -36,7 +36,7 @@ export const positions = new Float32Array(nParticles * 3);
 export const rotations = new Float32Array(nParticles * 4);
 
 export const SIZE_PHYSIC = 10;
-export const WORLD_RADIUS = 40;
+export const WORLD_RADIUS = 35;
 
 export const velocities = new Float32Array(nPhysic * 3);
 const velocitiesRot = new Float32Array(nPhysic * 4);

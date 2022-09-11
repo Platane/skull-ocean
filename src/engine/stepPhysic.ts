@@ -1,20 +1,32 @@
 import { quat, vec3 } from "gl-matrix";
-import { getVec3, positions } from "./buffers";
+import { getQuat, getVec3, positions, rotations, setQuat } from "./buffers";
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 
-const velocities = new Float32Array(nPhysic * 3);
-const velocitiesRot = new Float32Array(nPhysic * 4);
-
-const acceleration = new Float32Array(nPhysic * 3);
-
+//
+// tmp vars
+//
 const q = quat.create();
+const rot = quat.create();
+const vRot = quat.create();
 
 const p = vec3.create();
 const u = vec3.create();
 const v = vec3.create();
-const w = vec3.create();
-const a = vec3.create();
-const a2 = vec3.create();
+
+const QUAT_ID = quat.identity(quat.create());
+
+const velocities = new Float32Array(nPhysic * 3);
+const velocitiesRot = new Float32Array(nPhysic * 4);
+quat.identity(q);
+for (let i = nPhysic; i--; ) setQuat(velocitiesRot, i, q);
+for (let i = nPhysic; i--; ) {
+  quat.identity(q);
+  quat.rotateX(q, q, Math.random() * 0.1);
+  quat.rotateY(q, q, Math.random() * 0.1);
+  setQuat(velocitiesRot, i, q);
+}
+
+const acceleration = new Float32Array(nPhysic * 3);
 
 let tideX = 0;
 
@@ -106,9 +118,10 @@ export const stepPhysic = (dt: number) => {
     acceleration[i * 3 + 1] += (-velocities[i * 3 + 1] * 0.03) / dt;
     acceleration[i * 3 + 2] += (-velocities[i * 3 + 2] * 0.03) / dt;
 
-    // getQuat(q, velocitiesRot, i);
-    // quat.scale(q, q, 0.99);
-    // setQuat(velocitiesRot, i, q);
+    // rotation velocity reduction
+    getQuat(vRot, velocitiesRot, i);
+    quat.slerp(vRot, vRot, QUAT_ID, 0.006);
+    setQuat(velocitiesRot, i, vRot);
 
     // gravity
     acceleration[i * 3 + 1] -= 6;
@@ -189,6 +202,12 @@ export const stepPhysic = (dt: number) => {
     positions[i * 3 + 0] += dt * velocities[i * 3 + 0];
     positions[i * 3 + 1] += dt * velocities[i * 3 + 1];
     positions[i * 3 + 2] += dt * velocities[i * 3 + 2];
+
+    // step the rotation
+    getQuat(rot, rotations, i);
+    getQuat(vRot, velocitiesRot, i);
+    quat.multiply(rot, rot, vRot);
+    setQuat(rotations, i, rot);
 
     // check if the cell have changed
     getCells(cells2, positions[i * 3 + 0], positions[i * 3 + 2]);

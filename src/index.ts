@@ -3,9 +3,12 @@ import "./debug/auto-reload";
 import "./debug/debug";
 
 import "./controls";
+
 import { render } from "./renderer/render";
 
-import { stepPhysic, stepInert } from "./engine";
+import { stepPhysic } from "./engine/stepPhysic";
+import { stepInert } from "./engine/stepInert";
+import "./engine/initialPosition";
 
 const loop = () => {
   stepPhysic(1 / 60);

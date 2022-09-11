@@ -3,14 +3,14 @@ import { gl } from "../../../canvas";
 import {
   getQuat,
   getVec3,
-  nParticles,
   positions,
   rotations,
-} from "../../../engine";
+} from "../../../engine/buffers";
 import { getColor } from "../../../engine/color";
+import { nParticles } from "../../../engine/constants";
 import { lookAtMatrix, perspectiveMatrix } from "../../camera";
 
-export { nParticles } from "../../../engine";
+export { nParticles } from "../../../engine/constants";
 
 export const worldMatrixBuffer = gl.createBuffer();
 export const normalTransformMatrixBuffer = gl.createBuffer();

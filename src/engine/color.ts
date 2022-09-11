@@ -1,6 +1,6 @@
-import { positions } from ".";
 import { clamp, invLerp } from "../math/utils";
 import { hslToRgb } from "../renderer/utils/color";
+import { positions } from "./buffers";
 
 export const getColor = (out: [number, number, number], i: number) => {
   const y = positions[i * 3 + 1];

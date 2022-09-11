@@ -30,7 +30,7 @@ export const render = () => {
   // drawDebug_CollisionPlane();
   drawGiz();
   drawCursor();
-  drawSurfer();
+  // drawSurfer();
   drawSkull();
   drawSkullOutline();
 };

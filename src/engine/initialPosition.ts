@@ -27,7 +27,7 @@ import { collision_planes } from "./stepPhysic";
       );
     }
 
-    if (z < 0) return x > 1;
+    if (z < 0) return x > 4;
     else return x > 4;
   };
 
@@ -58,8 +58,6 @@ import { collision_planes } from "./stepPhysic";
     positions[i * 3 + 1] = Math.random() * 1 + 1;
     positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
   }
-
-  positions[0 * 3 + 2] = -11;
 
   //
   // TODO

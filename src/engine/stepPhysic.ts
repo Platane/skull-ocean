@@ -23,15 +23,10 @@ vec3.set(shoreAN, -0.4, 1, 0.2);
 vec3.normalize(shoreAN, shoreAN);
 
 const shoreBN = vec3.create();
-vec3.set(shoreBN, -0.4, 1.2, -0.3);
+vec3.set(shoreBN, -0.4, 1.2, -0.2);
 vec3.normalize(shoreBN, shoreBN);
 
-const shoreJunctionPoint = vec3.set(
-  vec3.create(),
-  SIZE_PHYSIC,
-  0.4,
-  SIZE_PHYSIC * 0.3
-);
+const shoreJunctionPoint = vec3.set(vec3.create(), 10, 0.4, 3);
 
 export const collision_planes = [
   //

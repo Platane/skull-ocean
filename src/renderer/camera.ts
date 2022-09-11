@@ -31,6 +31,9 @@ export const lookAtMatrix = new Float32Array(4 * 4);
 // combination or perspective and lookAt matrices
 export const worldMatrix = new Float32Array(4 * 4);
 
+// transform for normals
+export const normalTransformMatrix = new Float32Array(4 * 4);
+
 const update = () => {
   const radius = 2 + 0.8 + zoom * 0.39;
 
@@ -41,6 +44,9 @@ const update = () => {
   mat4.lookAt(lookAtMatrix, eye, lookAtPoint, UP);
 
   mat4.multiply(worldMatrix, perspectiveMatrix, lookAtMatrix);
+
+  mat4.invert(normalTransformMatrix, lookAtMatrix);
+  mat4.transpose(normalTransformMatrix, normalTransformMatrix);
 
   updateHorizonGeometry(eye, lookAtPoint);
 };

@@ -1,8 +1,8 @@
 //
 
 export const nPhysic = 600;
-export const nUnderneath = 1800;
-export const nAround = 2000;
+export const nUnderneath = 0;
+export const nAround = 0;
 
 export const nParticles = nPhysic + nUnderneath + nAround;
 

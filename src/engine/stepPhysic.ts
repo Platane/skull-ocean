@@ -1,9 +1,6 @@
 import { quat, vec3 } from "gl-matrix";
 import { getVec3, positions } from "./buffers";
-import { nPhysic } from "./constants";
-
-export const SIZE_PHYSIC = 10;
-export const WORLD_RADIUS = 35;
+import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 
 const velocities = new Float32Array(nPhysic * 3);
 const velocitiesRot = new Float32Array(nPhysic * 4);
@@ -21,17 +18,31 @@ const a2 = vec3.create();
 
 let tideX = 0;
 
-const ITEM_RADIUS = 0.5;
-
-const collision_planes = [
+export const collision_planes = [
   //
-  { n: [0, 0, 1] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
-  { n: [0, 0, -1] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
-  { n: [1, 0, 0] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
-  { n: [-1, 0, 0] as vec3, d: -SIZE_PHYSIC / 2, p: vec3.create() },
+  {
+    n: [0, 0, 1] as vec3,
+    d: 0,
+    p: vec3.set(vec3.create(), 0, 0, -SIZE_PHYSIC),
+  },
+  {
+    n: [0, 0, -1] as vec3,
+    d: 0,
+    p: vec3.set(vec3.create(), 0, 0, SIZE_PHYSIC),
+  },
+  {
+    n: [-1, 0, 0] as vec3,
+    d: 0,
+    p: vec3.set(vec3.create(), SIZE_PHYSIC, 0, 0),
+  },
+  {
+    n: [1, 0, 0] as vec3,
+    d: 0,
+    p: vec3.set(vec3.create(), -SIZE_PHYSIC, 0, 0),
+  },
 ];
 for (const plane of collision_planes) {
-  vec3.scaleAndAdd(plane.p, plane.p, plane.n, plane.d);
+  plane.d = -vec3.dot(plane.n, plane.p);
 }
 
 console.log(collision_planes);
@@ -74,10 +85,12 @@ export const stepPhysic = (dt: number) => {
     // wall
     for (let k = collision_planes.length; k--; ) {
       const plane = collision_planes[k];
-      vec3.sub(w, p, plane.p);
-      const d = vec3.dot(w, plane.n) - plane.d - ITEM_RADIUS;
+
+      const d = vec3.dot(p, plane.n) + plane.d - ITEM_RADIUS;
+
       if (d < 0) {
-        const f = 40 * 1 * Math.min(d, 0.15) ** 2;
+        const m = 0.16;
+        const f = 20 * (Math.min(-d, m) / m) ** 2;
 
         acceleration[i * 3 + 0] += plane.n[0] * f;
         acceleration[i * 3 + 1] += plane.n[1] * f;

@@ -41,6 +41,12 @@ import {
     positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
   }
 
+  positions[0 * 3 + 2] = -11;
+
+  //
+  // TODO
+  // improve that, it's too long to execute
+  //
   const tidyLayer = (iMin: number, iMax: number, yDamp = 1) => {
     velocities.fill(0);
 

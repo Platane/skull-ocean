@@ -4,11 +4,12 @@ import "./debug/debug";
 
 import "./controls";
 
+import "./engine/initialPosition";
+
 import { render } from "./renderer/render";
 
 import { stepPhysic } from "./engine/stepPhysic";
 import { stepInert } from "./engine/stepInert";
-import "./engine/initialPosition";
 
 const loop = () => {
   stepPhysic(1 / 60);

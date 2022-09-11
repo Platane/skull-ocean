@@ -6,6 +6,7 @@ import { draw as drawGiz } from "./materials/giz";
 import { draw as drawSkull } from "./materials/skull";
 import { draw as drawSkullOutline } from "./materials/skull-outline";
 import { draw as drawHorizon } from "./materials/horizon";
+import { draw as drawDebug_CollisionPlane } from "./materials/debug_collisionPlane";
 
 gl.clearColor(0, 0, 0, 0);
 gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -23,6 +24,7 @@ export const render = () => {
   // draw
   // drawFlat();
   drawHorizon();
+  drawDebug_CollisionPlane();
   drawGiz();
   drawSkull();
   drawSkullOutline();

@@ -1,4 +1,5 @@
 import { quat, vec3 } from "gl-matrix";
+import { lerp } from "../math/utils";
 
 export const getVec3 = (out: vec3, arr: ArrayLike<number>, i: number) => {
   out[0] = arr[i * 3 + 0];
@@ -25,33 +26,21 @@ const setQuat = (arr: Float32Array, i: number, q: quat) => {
 
 //
 
-export const nParticles = 1200;
+const nDynamic = 800;
+const nUnderneath = 2000;
+const nAround = 2000;
+
+export const nParticles = nDynamic + nUnderneath + nAround;
 
 export const positions = new Float32Array(nParticles * 3);
 export const rotations = new Float32Array(nParticles * 4);
 
-const s = 7;
+export const SIZE = 10;
 
-for (let i = nParticles; i--; ) {
-  positions[i * 3 + 0] = (Math.random() - 0.5) * s * 4;
-  positions[i * 3 + 1] = Math.random() * 1 + 1;
-  positions[i * 3 + 2] = (Math.random() - 0.5) * s * 4;
+export const velocities = new Float32Array(nDynamic * 3);
+const velocitiesRot = new Float32Array(nDynamic * 4);
 
-  const r = quat.fromEuler(
-    quat.create(),
-    //
-    Math.random() * 360,
-    Math.random() * 360,
-    Math.random() * 360
-  );
-
-  setQuat(rotations, i, r);
-}
-
-export const velocities = new Float32Array(nParticles * 3);
-const velocitiesRot = new Float32Array(nParticles * 4);
-
-const acceleration = new Float32Array(nParticles * 3);
+const acceleration = new Float32Array(nDynamic * 3);
 
 const q = quat.create();
 
@@ -69,26 +58,152 @@ const ITEM_RADIUS = 0.5;
 
 const collision_planes = [
   //
-  { n: [0, 0, 1] as vec3, d: -s, p: vec3.create() },
-  { n: [0, 0, -1] as vec3, d: -s, p: vec3.create() },
-  { n: [1, 0, 0] as vec3, d: -s, p: vec3.create() },
-  { n: [-1, 0, 0] as vec3, d: -s, p: vec3.create() },
+  { n: [0, 0, 1] as vec3, d: -SIZE / 2, p: vec3.create() },
+  { n: [0, 0, -1] as vec3, d: -SIZE / 2, p: vec3.create() },
+  { n: [1, 0, 0] as vec3, d: -SIZE / 2, p: vec3.create() },
+  { n: [-1, 0, 0] as vec3, d: -SIZE / 2, p: vec3.create() },
 ];
 for (const plane of collision_planes) {
   vec3.scaleAndAdd(plane.p, plane.p, plane.n, plane.d);
 }
 
+// initial positions
+{
+  // set random rotation
+  for (let i = nParticles; i--; ) {
+    quat.fromEuler(
+      q,
+      //
+      Math.random() * 360,
+      Math.random() * 360,
+      Math.random() * 360
+    );
+
+    setQuat(rotations, i, q);
+  }
+
+  // uniformly spread the dynamic ones
+  for (let i = nDynamic; i--; ) {
+    positions[i * 3 + 0] = (Math.random() - 0.5) * SIZE * 2;
+    positions[i * 3 + 1] = Math.random() * 1 + 1;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE * 2;
+  }
+
+  const velocities = new Float32Array(Math.max(nUnderneath, nAround) * 3);
+  const tidyLayer = (iMin: number, iMax: number, yDamp = 1) => {
+    velocities.fill(0);
+
+    for (let i = 0; i < iMax - iMin; i++) {
+      getVec3(p, positions, i + iMin);
+
+      // push each other
+      for (let j = 0; j < i; j++) {
+        getVec3(u, positions, j + iMin);
+
+        const dSquare = vec3.sqrDist(p, u);
+
+        if (dSquare < (ITEM_RADIUS * 2) ** 2) {
+          const d = Math.sqrt(dSquare);
+
+          if (d > 0.0001) {
+            vec3.sub(v, p, u);
+            v[1] *= yDamp;
+            vec3.normalize(v, v);
+          } else {
+            vec3.set(v, 1, 0, 0);
+          }
+
+          const f = 1 - d;
+
+          velocities[i * 3 + 0] += v[0] * f;
+          velocities[i * 3 + 1] += v[1] * f;
+          velocities[i * 3 + 2] += v[2] * f;
+
+          velocities[j * 3 + 0] -= v[0] * f;
+          velocities[j * 3 + 1] -= v[1] * f;
+          velocities[j * 3 + 2] -= v[2] * f;
+        }
+      }
+    }
+
+    for (let i = iMin; i < iMax; i++) {
+      positions[(i + iMin) * 3 + 0] += 1.2 * velocities[i * 3 + 0];
+      positions[(i + iMin) * 3 + 1] += 1.2 * velocities[i * 3 + 1];
+      positions[(i + iMin) * 3 + 2] += 1.2 * velocities[i * 3 + 2];
+    }
+  };
+
+  const R = 40;
+
+  // layer of background underneath everything
+  for (let i = nDynamic; i < nDynamic + nUnderneath; i++) {
+    const r = R * Math.sqrt(Math.random());
+    const theta = Math.random() * 2 * Math.PI;
+
+    positions[i * 3 + 0] = Math.sin(theta) * r;
+    positions[i * 3 + 1] = -2.8 + Math.random() * 0.8;
+    positions[i * 3 + 2] = Math.cos(theta) * r;
+  }
+  for (let k = 10; k--; ) tidyLayer(nDynamic, nDynamic + nUnderneath, 0.01);
+
+  // layer of inert skulls around the dynamics
+  for (
+    let i = nDynamic + nUnderneath;
+    i < nDynamic + nUnderneath + nAround;
+    i++
+  ) {
+    let x = 0;
+    let y = 0;
+
+    while (-SIZE < x && x < SIZE && -SIZE < y && y < SIZE) {
+      const r = R * Math.sqrt(lerp(Math.random(), (SIZE / R) ** 2, 1));
+      const theta = Math.random() * 2 * Math.PI;
+
+      x = Math.sin(theta) * r;
+      y = Math.cos(theta) * r;
+    }
+
+    positions[i * 3 + 0] = x;
+    positions[i * 3 + 1] = Math.random() * 0.9 + 0.3;
+    positions[i * 3 + 2] = y;
+  }
+
+  for (let k = 30; k--; )
+    tidyLayer(nDynamic + nUnderneath, nDynamic + nUnderneath + nAround, 0.5);
+}
+
 let generation = 1;
 
-export const step = (dt: number) => {
+let inertT = 0;
+export const stepInert = (dt: number) => {
+  const lastT = inertT;
+  inertT += dt;
+
+  for (
+    let i = nDynamic + nUnderneath;
+    i < nDynamic + nUnderneath + nAround;
+    i++
+  ) {
+    const offset = ((i % 103) / 103) * Math.PI * 2;
+    const a = lerp(((i * 17) % 29) / 29, 3, 3);
+
+    const A = 0.2;
+    const dy_last = Math.sin(a * lastT + offset) * A;
+    const dy = Math.sin(a * inertT + offset) * A;
+
+    positions[i * 3 + 1] += dy - dy_last;
+  }
+};
+
+export const stepPhysic = (dt: number) => {
   t += dt;
   generation = (generation + 1) % 1024;
 
   acceleration.fill(0);
 
-  tideX = ((tideX + dt * 5 + s * 1.6) % (s * 2 * 1.6)) - s * 1.6;
+  tideX = ((tideX + dt * 5 + SIZE * 1.6) % (SIZE * 2 * 1.6)) - SIZE * 1.6;
 
-  for (let i = 0; i < nParticles; i++) {
+  for (let i = 0; i < nDynamic; i++) {
     getVec3(p, positions, i);
 
     // solid friction
@@ -163,7 +278,7 @@ export const step = (dt: number) => {
     }
   }
 
-  for (let i = nParticles; i--; ) {
+  for (let i = nDynamic; i--; ) {
     velocities[i * 3 + 0] += dt * acceleration[i * 3 + 0];
     velocities[i * 3 + 1] += dt * acceleration[i * 3 + 1];
     velocities[i * 3 + 2] += dt * acceleration[i * 3 + 2];

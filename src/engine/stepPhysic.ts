@@ -1,7 +1,7 @@
 import { quat, vec3 } from "gl-matrix";
 import { getQuat, getVec3, positions, rotations, setQuat } from "./buffers";
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
-import { getCells, grid } from "./grid";
+import { getCells, updateItemInGrid } from "./grid";
 
 //
 // tmp vars
@@ -58,14 +58,13 @@ for (const plane of collision_planes) {
   plane.d = -vec3.dot(plane.n, plane.p);
 }
 
-const cells1: number[] = [];
-const cells2: number[] = [];
+const cells1: Set<number>[] = [];
 const seen = new Set<number>();
 
 // init
 for (let i = 0; i < nPhysic; i++) {
   getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);
-  for (let k = cells1.length; k--; ) grid[cells1[k]].add(i);
+  for (let k = cells1.length; k--; ) cells1[k].add(i);
 }
 
 const applyForce = (i: number, fv: vec3, s: number) => {
@@ -138,7 +137,7 @@ export const stepPhysic = (dt: number) => {
     seen.clear();
     getCells(cells1, p[0], p[2]);
     for (let k = cells1.length; k--; )
-      for (const j of grid[cells1[k]] as any)
+      for (const j of cells1[k] as any)
         if (j < i && !seen.has(j)) {
           getVec3(u, positions, j);
 
@@ -169,8 +168,8 @@ export const stepPhysic = (dt: number) => {
   }
 
   for (let i = nPhysic; i--; ) {
-    // save the previous cells
-    getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);
+    const px = positions[i * 3 + 0];
+    const py = positions[i * 3 + 2];
 
     // step the position
     velocities[i * 3 + 0] += dt * acceleration[i * 3 + 0];
@@ -187,15 +186,7 @@ export const stepPhysic = (dt: number) => {
     quat.multiply(rot, rot, vRot);
     setQuat(rotations, i, rot);
 
-    // check if the cell have changed
-    getCells(cells2, positions[i * 3 + 0], positions[i * 3 + 2]);
-    if (
-      cells1[0] !== cells2[0] ||
-      cells1[1] !== cells2[1] ||
-      cells1[2] !== cells2[2]
-    ) {
-      for (let k = cells1.length; k--; ) grid[cells1[k]].delete(i);
-      for (let k = cells2.length; k--; ) grid[cells2[k]].add(i);
-    }
+    // update grid
+    updateItemInGrid(i, px, py, positions[i * 3 + 0], positions[i * 3 + 2]);
   }
 };

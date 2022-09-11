@@ -15,7 +15,7 @@ export const grid = Array.from({ length: gridN ** 2 }, () => new Set<number>());
 
 const getCellIndex = (cellX: number, cellY: number) => cellX * gridN + cellY;
 
-export const getCells = (out: number[], x: number, y: number) => {
+export const getCells = (out: Set<number>[], x: number, y: number) => {
   const cX = Math.floor((x - gridOffsetX) / gridResolution);
   const cY = Math.floor((y - gridOffsetY) / gridResolution);
 
@@ -25,14 +25,36 @@ export const getCells = (out: number[], x: number, y: number) => {
   }
 
   out.length = 1;
-  out[0] = getCellIndex(cX, cY);
+  out[0] = grid[getCellIndex(cX, cY)];
 
   const xm = 1 - (x - cX * gridResolution) > gridOverlap && cX + 1 < gridN;
   const ym = 1 - (y - cY * gridResolution) > gridOverlap && cY + 1 < gridN;
 
-  if (xm) out.push(getCellIndex(cX + 1, cY));
+  if (xm) out.push(grid[getCellIndex(cX + 1, cY)]);
   if (ym) {
-    out.push(getCellIndex(cX, cY + 1));
-    if (xm) out.push(getCellIndex(cX + 1, cY + 1));
+    out.push(grid[getCellIndex(cX, cY + 1)]);
+    if (xm) out.push(grid[getCellIndex(cX + 1, cY + 1)]);
+  }
+};
+
+const cells1 = [] as Set<number>[];
+const cells2 = [] as Set<number>[];
+
+export const updateItemInGrid = (
+  i: number,
+  previousX: number,
+  previousY: number,
+  newX: number,
+  newY: number
+) => {
+  getCells(cells1, previousX, previousY);
+  getCells(cells2, newX, newY);
+  if (
+    cells1[0] !== cells2[0] ||
+    cells1[1] !== cells2[1] ||
+    cells1[2] !== cells2[2]
+  ) {
+    for (let k = cells1.length; k--; ) cells1[k].delete(i);
+    for (let k = cells2.length; k--; ) cells2[k].add(i);
   }
 };

@@ -20,8 +20,8 @@ let phi = 1.2;
 let theta = 1;
 let zoom = Math.floor((maxZoom + minZoom) / 2);
 const rotationSpeed = 4;
-const lookAtPoint: vec3 = [0, 0, 0];
-const eye: vec3 = [0, 0, 1];
+export const lookAtPoint: vec3 = [0, 0, 0];
+export const eye: vec3 = [0, 0, 1];
 
 const UP: vec3 = [0, 1, 0];
 
@@ -30,6 +30,9 @@ export const lookAtMatrix = new Float32Array(4 * 4);
 
 // combination or perspective and lookAt matrices
 export const worldMatrix = new Float32Array(4 * 4);
+
+// to apply to normal
+export const normalTransformMatrix3 = mat3.create();
 
 const update = () => {
   const radius = 2 + 0.8 + zoom * 0.39;
@@ -41,6 +44,8 @@ const update = () => {
   mat4.lookAt(lookAtMatrix, eye, lookAtPoint, UP);
 
   mat4.multiply(worldMatrix, perspectiveMatrix, lookAtMatrix);
+
+  mat3.normalFromMat4(normalTransformMatrix3, lookAtMatrix);
 
   updateHorizonGeometry(eye, lookAtPoint);
 };

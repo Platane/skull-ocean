@@ -1,6 +1,10 @@
 import { canvas } from "./canvas";
 import { onTouchStart, onTouchMove, onTouchEnd } from "./renderer/camera";
 import { Handler } from "./controls-type";
+import {
+  onMouseMove as onMouseMove_surfer,
+  onTap as onTap_surfer,
+} from "./engine/stepSurfer";
 
 let downTimeStamp = 0;
 let t0: { pageX: number; pageY: number }[];
@@ -11,12 +15,12 @@ const onStart: Handler = (t) => {
 };
 const onMove: Handler = (t) => {
   onTouchMove(t);
-  // onHover(t);
+  onMouseMove_surfer(t);
 };
 const onEnd: Handler = (t) => {
   onTouchEnd(t);
 
-  // if (Date.now() < downTimeStamp + 300) console.log(t0);
+  if (Date.now() < downTimeStamp + 300) onTap_surfer(t);
 };
 
 canvas.addEventListener("mousedown", (event) => onStart([event]));

@@ -120,7 +120,14 @@ export const stepPhysic = (dt: number) => {
 
     // rotation velocity reduction
     getQuat(vRot, velocitiesRot, i);
-    quat.slerp(vRot, vRot, QUAT_ID, 0.006);
+    quat.slerp(vRot, vRot, QUAT_ID, 0.06);
+
+    // randomly set the moment when the y velocity is high enough
+    if (Math.abs(velocities[i * 3 + 1]) > 1.1 && Math.random() < 0.05) {
+      quat.rotateX(vRot, vRot, (Math.random() - 0.5) * 0.1);
+      quat.rotateY(vRot, vRot, (Math.random() - 0.5) * 0.1);
+    }
+
     setQuat(velocitiesRot, i, vRot);
 
     // gravity
@@ -136,7 +143,7 @@ export const stepPhysic = (dt: number) => {
       const d = Math.min(m, Math.abs(tideX - p[0]));
       const f = ((d - m) / m) ** 2;
 
-      acceleration[i * 3 + 1] -= f * 20;
+      acceleration[i * 3 + 1] -= f * 40;
     }
 
     // wall

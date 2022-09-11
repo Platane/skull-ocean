@@ -1,4 +1,4 @@
-import { mat4, quat, vec3 } from "gl-matrix";
+import { mat3, mat4, quat, vec3 } from "gl-matrix";
 import { gl } from "../../../canvas";
 import {
   getQuat,
@@ -17,6 +17,7 @@ export const normalTransformMatrixBuffer = gl.createBuffer();
 export const colorBuffer = gl.createBuffer();
 
 const colors = new Float32Array(4 * nParticles);
+colors.fill(1);
 
 const worldMatrix = new Float32Array(16 * nParticles);
 const worldMatrices = Array.from(
@@ -25,12 +26,14 @@ const worldMatrices = Array.from(
 );
 
 const normalTransformMatrix = new Float32Array(16 * nParticles);
-const normalTransformMatrices = Array.from(
-  { length: nParticles },
-  (_, i) => new Float32Array(normalTransformMatrix.buffer, i * 16 * 4, 16)
-);
+const normalTransformMatrices = Array.from({ length: nParticles }, (_, i) => {
+  const m = new Float32Array(normalTransformMatrix.buffer, i * 16 * 4, 16);
+  mat4.identity(m as any);
+  return m;
+});
 
 const transformMatrix = mat4.create();
+const m3 = mat3.create();
 
 // use gl.bufferData once, then use bufferSubData which is suppose to be faster
 // ref: http://disq.us/p/2ep12df
@@ -59,15 +62,21 @@ export const updateTransform = () => {
     mat4.multiply(transformMatrix, lookAtMatrix, transformMatrix);
     mat4.multiply(worldMatrices[i], perspectiveMatrix, transformMatrix);
 
-    // set the normal transform matrix
-    mat4.invert(normalTransformMatrices[i], transformMatrix);
-    mat4.transpose(normalTransformMatrices[i], normalTransformMatrices[i]);
+    mat3.normalFromMat4(m3, transformMatrix);
+    normalTransformMatrices[i][0] = m3[0];
+    normalTransformMatrices[i][1] = m3[1];
+    normalTransformMatrices[i][2] = m3[2];
+    normalTransformMatrices[i][4] = m3[3];
+    normalTransformMatrices[i][5] = m3[4];
+    normalTransformMatrices[i][6] = m3[5];
+    normalTransformMatrices[i][8] = m3[6];
+    normalTransformMatrices[i][9] = m3[7];
+    normalTransformMatrices[i][10] = m3[8];
 
     // set the color
     colors[i * 4 + 0] = color[0];
     colors[i * 4 + 1] = color[1];
     colors[i * 4 + 2] = color[2];
-    colors[i * 4 + 3] = 1;
   }
 
   gl.bindBuffer(gl.ARRAY_BUFFER, worldMatrixBuffer);

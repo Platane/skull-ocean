@@ -2,7 +2,7 @@ import { mat4, vec3, mat3 } from "gl-matrix";
 import { canvas } from "../canvas";
 import { clamp } from "../math/utils";
 import { Handler } from "../controls-type";
-import { updateGeometry as updateHorizonGeometry } from "./materials/horizon";
+import { updateGeometry as updateHorizonGeometry } from "./materials/horizon/transform";
 
 const maxZoom = 100;
 const minZoom = 0;

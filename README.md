@@ -6,7 +6,7 @@
 
 # TODO
 
-- [ ] [phy] quad tree to speed up collision detection
+- [x] [phy] quad tree to speed up collision detection
 - [ ] [phy] rotation impulse on contact
 - [ ] [rendering] sky box
 - [ ] [rendering] surfer
@@ -14,4 +14,4 @@
 - [ ] [phy] waves
 - [ ] [phy] wave riding
 - [ ] [gameplay] controls
-- [ ] [phy] ove the physic world as the surfer moves (is that even possible ?)
+- [ ] ~~[phy] move the physic world as the surfer moves (is that even possible ?)~~

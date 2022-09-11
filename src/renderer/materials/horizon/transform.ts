@@ -13,16 +13,16 @@ gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
 
 export const updateGeometry = (eye: vec3, lookAtPoint: vec3) => {
-  const d = Math.hypot(lookAtPoint[0], lookAtPoint[2]);
+  const d = Math.hypot(eye[0], eye[2]);
 
-  const ySwell = 2;
+  const ySwell = 0.8;
   const y0 = -4;
 
   let HORIZON_RADIUS = 999;
 
   if (eye[1] > ySwell + 0.1) {
     const r = (eye[1] - ySwell) / (eye[1] - y0);
-    HORIZON_RADIUS = (WORLD_RADIUS - d) / r + d;
+    HORIZON_RADIUS = (WORLD_RADIUS + d) / r - d;
     // HORIZON_RADIUS = WORLD_RADIUS / r;
   }
 

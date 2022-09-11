@@ -10,6 +10,8 @@
 - [ ] [phy] rotation impulse on contact
 - [ ] [rendering] sky box
 - [ ] [rendering] surfer
+- [ ] [rendering] depth effect
 - [ ] [phy] waves
 - [ ] [phy] wave riding
 - [ ] [gameplay] controls
+- [ ] [phy] ove the physic world as the surfer moves (is that even possible ?)

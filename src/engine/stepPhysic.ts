@@ -18,34 +18,52 @@ const a2 = vec3.create();
 
 let tideX = 0;
 
+const shoreAN = vec3.create();
+vec3.set(shoreAN, -0.4, 1, 0.2);
+vec3.normalize(shoreAN, shoreAN);
+
+const shoreBN = vec3.create();
+vec3.set(shoreBN, -0.4, 1.2, -0.2);
+vec3.normalize(shoreBN, shoreBN);
+
+const shoreJunctionPoint = vec3.set(vec3.create(), 10, 0.4, 3);
+
 export const collision_planes = [
   //
   {
-    n: [0, 0, 1] as vec3,
+    n: vec3.set(vec3.create(), 0, 0, 1),
     d: 0,
     p: vec3.set(vec3.create(), 0, 0, -SIZE_PHYSIC),
   },
   {
-    n: [0, 0, -1] as vec3,
+    n: vec3.set(vec3.create(), 0, 0, -1),
     d: 0,
     p: vec3.set(vec3.create(), 0, 0, SIZE_PHYSIC),
   },
+  // {
+  //   n: vec3.set(vec3.create(), -1, 0, 0),
+  //   d: 0,
+  //   p: vec3.set(vec3.create(), SIZE_PHYSIC, 0, 0),
+  // },
   {
-    n: [-1, 0, 0] as vec3,
-    d: 0,
-    p: vec3.set(vec3.create(), SIZE_PHYSIC, 0, 0),
-  },
-  {
-    n: [1, 0, 0] as vec3,
+    n: vec3.set(vec3.create(), 1, 0, 0),
     d: 0,
     p: vec3.set(vec3.create(), -SIZE_PHYSIC, 0, 0),
+  },
+  {
+    n: shoreAN,
+    d: 0,
+    p: shoreJunctionPoint,
+  },
+  {
+    n: shoreBN,
+    d: 0,
+    p: shoreJunctionPoint,
   },
 ];
 for (const plane of collision_planes) {
   plane.d = -vec3.dot(plane.n, plane.p);
 }
-
-console.log(collision_planes);
 
 export const stepPhysic = (dt: number) => {
   acceleration.fill(0);

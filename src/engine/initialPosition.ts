@@ -10,9 +10,27 @@ import {
   SIZE_PHYSIC,
   WORLD_RADIUS,
 } from "./constants";
+import { collision_planes } from "./stepPhysic";
 
 // initial positions
 {
+  const shores = collision_planes.slice(-2);
+  const discardShore = (x: number, y: number, z: number) => {
+    if (
+      -SIZE_PHYSIC < x &&
+      x < SIZE_PHYSIC &&
+      -SIZE_PHYSIC < z &&
+      z < SIZE_PHYSIC
+    ) {
+      return shores.some(
+        (plane) => plane.n[0] * -x + plane.n[2] * -z > plane.d
+      );
+    }
+
+    if (z < 0) return x > 4;
+    else return x > 4;
+  };
+
   const q = quat.create();
 
   const p = vec3.create();
@@ -40,8 +58,6 @@ import {
     positions[i * 3 + 1] = Math.random() * 1 + 1;
     positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
   }
-
-  positions[0 * 3 + 2] = -11;
 
   //
   // TODO
@@ -92,14 +108,23 @@ import {
 
   // layer of background underneath everything
   for (let i = nPhysic; i < nPhysic + nUnderneath; i++) {
-    const r = WORLD_RADIUS * Math.sqrt(Math.random());
-    const theta = Math.random() * 2 * Math.PI;
+    let x = 999;
+    let y = 0;
+    const h = -2.8 + Math.random() * 0.8;
 
-    positions[i * 3 + 0] = Math.sin(theta) * r;
-    positions[i * 3 + 1] = -2.8 + Math.random() * 0.8;
-    positions[i * 3 + 2] = Math.cos(theta) * r;
+    while (discardShore(x, h, y)) {
+      const r = WORLD_RADIUS * Math.sqrt(Math.random());
+      const theta = Math.random() * 2 * Math.PI;
+
+      x = Math.sin(theta) * r;
+      y = Math.cos(theta) * r;
+    }
+
+    positions[i * 3 + 0] = x;
+    positions[i * 3 + 1] = h;
+    positions[i * 3 + 2] = y;
   }
-  for (let k = 2; k--; ) tidyLayer(nPhysic, nPhysic + nUnderneath, 0.1);
+  // for (let k = 2; k--; ) tidyLayer(nPhysic, nPhysic + nUnderneath, 0.1);
 
   // layer of inert skulls around the dynamics
   for (
@@ -109,12 +134,14 @@ import {
   ) {
     let x = 0;
     let y = 0;
+    const h = Math.random() * 0.9 + 0.3;
 
     while (
-      -SIZE_PHYSIC < x &&
-      x < SIZE_PHYSIC &&
-      -SIZE_PHYSIC < y &&
-      y < SIZE_PHYSIC
+      (-SIZE_PHYSIC < x &&
+        x < SIZE_PHYSIC &&
+        -SIZE_PHYSIC < y &&
+        y < SIZE_PHYSIC) ||
+      discardShore(x, h, y)
     ) {
       const r =
         WORLD_RADIUS *
@@ -126,7 +153,7 @@ import {
     }
 
     positions[i * 3 + 0] = x;
-    positions[i * 3 + 1] = Math.random() * 0.9 + 0.3;
+    positions[i * 3 + 1] = h;
     positions[i * 3 + 2] = y;
   }
 

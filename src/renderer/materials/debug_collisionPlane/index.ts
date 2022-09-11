@@ -104,7 +104,11 @@ export const draw = () => {
 
   gl.disable(gl.CULL_FACE);
 
+  // gl.depthMask(false);
+
   gl.drawArrays(gl.TRIANGLES, 0, positions.length);
+
+  // gl.depthMask(true);
 
   gl.bindVertexArray(null);
 };

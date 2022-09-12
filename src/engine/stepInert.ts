@@ -74,7 +74,7 @@ for (let i = nPhysic; i < nPhysic + nUnderneath; i++) {
     Math.random() * (cellSize - ITEM_RADIUS * 2) -
     WORLD_SIZE / 2;
 
-  positions[i * 3 + 1] = -(2.4 + layer * 1.5) + Math.random() * 0.6;
+  positions[i * 3 + 1] = -(2.2 + layer * 1.5) + Math.random() * 0.6;
 }
 
 // shuffle

@@ -29,7 +29,7 @@ export const onTap: Handler = () => {
     return;
   } else doAcc();
 };
-export const onMouseMove: Handler = (touches) => {
+export const onTouchMove: Handler = (touches) => {
   const { pageX, pageY } = touches[0];
 
   getRayFromScreen(o, v, getScreenX(pageX), getScreenY(pageY));

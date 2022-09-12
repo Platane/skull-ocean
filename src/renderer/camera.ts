@@ -58,11 +58,13 @@ let l0: number | null = null;
 let px: number | null = null;
 let py: number | null = null;
 
-const rotateStart: Handler = ([{ pageX: x, pageY: y }]) => {
+type H = (touches: { pageX: number; pageY: number }[]) => void;
+
+const rotateStart: H = ([{ pageX: x, pageY: y }]) => {
   px = x;
   py = y;
 };
-const rotateMove: Handler = ([{ pageX: x, pageY: y }]) => {
+const rotateMove: H = ([{ pageX: x, pageY: y }]) => {
   if (px !== null) {
     const dx = x - px!;
     const dy = y - py!;
@@ -82,14 +84,14 @@ const rotateEnd = () => {
   px = null;
 };
 
-const scaleStart: Handler = ([
+const scaleStart: H = ([
   { pageX: ax, pageY: ay },
   { pageX: bx, pageY: by },
 ]) => {
   zoom0 = zoom;
   l0 = Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
 };
-const scaleMove: Handler = (a) => {
+const scaleMove: H = (a) => {
   if (l0 !== null) {
     const [{ pageX: ax, pageY: ay }, { pageX: bx, pageY: by }] = a;
 

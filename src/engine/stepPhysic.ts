@@ -9,6 +9,7 @@ import {
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 import { getCells, updateItemInGrid } from "./grid";
 import { forceLines } from "./stepWaves";
+import { state as waveCreatorState } from "./waveCreator";
 
 //
 // tmp vars
@@ -136,6 +137,26 @@ export const stepPhysic = (dt: number) => {
         const f = 20 * (Math.min(-d, m) / m) ** 2;
 
         applyForce(i, plane.n, f);
+      }
+    }
+
+    // pushed by the cursor
+    if (waveCreatorState.drag) {
+      u[0] = waveCreatorState.drag[0].x;
+      u[1] = 2.3;
+      u[2] = waveCreatorState.drag[0].y;
+
+      const R = 5;
+
+      vec3.sub(v, p, u);
+      const dSquare = vec3.sqrLen(v);
+
+      if (dSquare < R ** 2) {
+        const d = Math.sqrt(dSquare);
+
+        const f = 35 / Math.max(0.5, d * 1.2);
+
+        applyForce(i, v, f / d);
       }
     }
 

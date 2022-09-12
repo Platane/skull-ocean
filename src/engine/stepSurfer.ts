@@ -35,7 +35,8 @@ export const onMouseMove: Handler = (touches) => {
   getRayFromScreen(o, v, getScreenX(pageX), getScreenY(pageY));
 
   // project on the ground
-  const y0 = position[1];
+  // const y0 = position[1] ;
+  const y0 = 0;
   const t = (y0 - o[1]) / v[1];
   vec3.scaleAndAdd(lookAt, o, v, t);
 };

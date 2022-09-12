@@ -2,6 +2,7 @@ import { quat, vec3 } from "gl-matrix";
 import { getQuat, getVec3, positions, rotations, setQuat } from "./buffers";
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 import { getCells, updateItemInGrid } from "./grid";
+import { forceLines } from "./stepWaves";
 
 //
 // tmp vars
@@ -28,8 +29,6 @@ for (let i = nPhysic; i--; ) {
 }
 
 const acceleration = new Float32Array(nPhysic * 3);
-
-let tideX = 0;
 
 export const collision_planes = [
   //
@@ -61,25 +60,21 @@ for (const plane of collision_planes) {
 const cells1: Set<number>[] = [];
 const seen = new Set<number>();
 
-// init
-for (let i = 0; i < nPhysic; i++) {
-  getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);
-  for (let k = cells1.length; k--; ) cells1[k].add(i);
-}
-
 const applyForce = (i: number, fv: vec3, s: number) => {
   acceleration[i * 3 + 0] += fv[0] * s;
   acceleration[i * 3 + 1] += fv[1] * s;
   acceleration[i * 3 + 2] += fv[2] * s;
 };
 
+let generation = 0;
 export const stepPhysic = (dt: number) => {
+  generation = (generation + 1) % 1024;
+  const generationRand = (generation % 37) ** 2 + (generation % 19) * 7;
+
+  // reset acc
   acceleration.fill(0);
 
-  tideX =
-    ((tideX + dt * 5 + SIZE_PHYSIC * 1.6) % (SIZE_PHYSIC * 2 * 1.6)) -
-    SIZE_PHYSIC * 1.6;
-
+  // loop over particles
   for (let i = 0; i < nPhysic; i++) {
     getVec3(p, positions, i);
 
@@ -93,7 +88,10 @@ export const stepPhysic = (dt: number) => {
     quat.slerp(vRot, vRot, QUAT_ID, 0.06);
 
     // randomly set the moment when the y velocity is high enough
-    if (Math.abs(velocities[i * 3 + 1]) > 1.1 && Math.random() < 0.05) {
+    if (
+      Math.abs(velocities[i * 3 + 1]) > 0.7 &&
+      i % 47 == generationRand % 47
+    ) {
       quat.rotateX(vRot, vRot, (Math.random() - 0.5) * 0.1);
       quat.rotateY(vRot, vRot, (Math.random() - 0.5) * 0.1);
     }
@@ -103,17 +101,22 @@ export const stepPhysic = (dt: number) => {
     // gravity
     acceleration[i * 3 + 1] -= 6;
 
-    // underwater
+    // buoyance if "underwater"
     if (p[1] < 0) {
-      // buoyance
       acceleration[i * 3 + 1] += -p[1] * 30;
+    }
 
-      // low tide
-      const m = 4;
-      const d = Math.min(m, Math.abs(tideX - p[0]));
-      const f = ((d - m) / m) ** 2;
+    // waves
+    for (let k = forceLines.length; k--; ) {
+      const fl = forceLines[k];
 
-      acceleration[i * 3 + 1] -= f * 40;
+      const dN = Math.abs(fl.n[0] * p[0] + fl.n[1] * p[2] - fl.dN);
+
+      const dOrtho = Math.abs(-fl.n[1] * p[0] + fl.n[0] * p[2] - fl.dOrtho);
+
+      const w = ((1 / Math.max(0.2, dN)) * 1) / Math.max(dOrtho - fl.l, 0.2);
+
+      applyForce(i, fl.force, w);
     }
 
     // wall
@@ -194,6 +197,16 @@ export const stepPhysic = (dt: number) => {
 //
 // initial positions
 //
+const MIN_CELL_SIZE = 0.9;
+const cellSizes = [];
+const nPackedLayer = Math.floor((SIZE_PHYSIC * 2) ** 2 / MIN_CELL_SIZE ** 2);
+let n = nPhysic;
+while (n > 0) {
+  const s = Math.min(n, nPackedLayer);
+  cellSizes.push(Math.sqrt((SIZE_PHYSIC * 2) ** 2 / s));
+  n -= s;
+}
+
 for (let i = nPhysic; i--; ) {
   // set random rotation
   quat.fromEuler(
@@ -205,10 +218,16 @@ for (let i = nPhysic; i--; ) {
   );
   setQuat(rotations, i, q);
 
+  const y = Math.floor(i / nPackedLayer);
+  const cellSize = cellSizes[y];
+  const w = Math.ceil((SIZE_PHYSIC * 2) / cellSize);
+  const x = (i % nPackedLayer) % w;
+  const z = Math.floor((i % nPackedLayer) / w);
+
   // uniformly spread
-  positions[i * 3 + 0] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
-  positions[i * 3 + 1] = Math.random() * 1 + 1;
-  positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
+  positions[i * 3 + 0] = x * cellSize - SIZE_PHYSIC + ITEM_RADIUS;
+  positions[i * 3 + 1] = y * cellSize + Math.random() * 0.8;
+  positions[i * 3 + 2] = z * cellSize - SIZE_PHYSIC + ITEM_RADIUS;
 
   // push to the grid
   getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);

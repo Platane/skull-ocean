@@ -9,6 +9,7 @@ import { draw as drawHorizon } from "./materials/horizon";
 import { draw as drawSurfer } from "./materials/surfer";
 import { draw as drawDebug_CollisionPlane } from "./materials/debug_collisionPlane";
 import { draw as drawCursor } from "./materials/cursor";
+import { draw as drawDebug_ForceLine } from "./materials/debug_forceLine";
 
 gl.clearColor(0, 0, 0, 0);
 gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -28,6 +29,7 @@ export const render = () => {
   // drawFlat();
   drawHorizon();
   // drawDebug_CollisionPlane();
+  drawDebug_ForceLine();
   drawGiz();
   drawCursor();
   // drawSurfer();

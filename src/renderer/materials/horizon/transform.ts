@@ -1,8 +1,8 @@
 import { gl } from "../../../canvas";
 import { vec3 } from "gl-matrix";
-import { WORLD_RADIUS } from "../../../engine/constants";
+import { SIZE_PHYSIC } from "../../../engine/constants";
 
-export const N = 10;
+export const N = 4;
 
 //
 // position
@@ -22,12 +22,12 @@ export const updateGeometry = (eye: vec3, lookAtPoint: vec3) => {
 
   if (eye[1] > ySwell + 0.01) {
     const r = (eye[1] - ySwell) / (eye[1] - y0);
-    HORIZON_RADIUS = (WORLD_RADIUS + d) / r - d;
+    HORIZON_RADIUS = (SIZE_PHYSIC * 1.4 + d) / r - d;
   }
 
-  for (let i = N; i--; ) {
-    const a0 = (Math.PI * 2 * i) / (N - 1);
-    const a1 = (Math.PI * 2 * (i + 1)) / (N - 1);
+  for (let i = 0; i < N; i++) {
+    const a0 = (Math.PI * 2 * i) / N + Math.PI / 4;
+    const a1 = (Math.PI * 2 * (i + 1)) / N + Math.PI / 4;
 
     positions[i * 9 + 0 * 3 + 0] = 0;
     positions[i * 9 + 0 * 3 + 1] = y0;

@@ -1,6 +1,6 @@
 //
 
-export const nPhysic = 3000;
+export const nPhysic = 2200;
 export const nUnderneath = 1000;
 export const nAround = 0;
 

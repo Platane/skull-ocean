@@ -9,12 +9,15 @@ import { render } from "./renderer/render";
 import { stepPhysic } from "./engine/stepPhysic";
 import { stepInert } from "./engine/stepInert";
 import { stepSurfer } from "./engine/stepSurfer";
+import { stepWaves } from "./engine/stepWaves";
 
-const dt = 1 / 60;
+const DT = 1 / 60;
+
 const loop = () => {
-  stepPhysic(dt);
-  stepSurfer(dt);
-  stepInert(dt);
+  stepPhysic(DT);
+  stepSurfer(DT);
+  stepInert(DT);
+  stepWaves(DT);
 
   render();
   requestAnimationFrame(loop);

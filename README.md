@@ -8,6 +8,7 @@
 
 - [x] [phy] quad tree to speed up collision detection
 - [ ] [phy] rotation impulse on contact
+- [ ] [phy] run in worker
 - [ ] [rendering] sky box
 - [ ] [rendering] surfer
 - [ ] [rendering] depth effect

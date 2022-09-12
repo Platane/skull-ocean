@@ -1,5 +1,11 @@
 import { quat, vec3 } from "gl-matrix";
-import { getQuat, getVec3, positions, rotations, setQuat } from "./buffers";
+import {
+  getQuat,
+  getVec3,
+  positions,
+  rotations,
+  setQuat,
+} from "./particlesBuffers";
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 import { getCells, updateItemInGrid } from "./grid";
 import { forceLines } from "./stepWaves";

@@ -5,7 +5,7 @@ import {
   getVec3,
   positions,
   rotations,
-} from "../../../engine/buffers";
+} from "../../../engine/particlesBuffers";
 import { getColor } from "../../../engine/color";
 import { nParticles } from "../../../engine/constants";
 import { lookAtMatrix, perspectiveMatrix } from "../../camera";

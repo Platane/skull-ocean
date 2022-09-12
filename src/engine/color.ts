@@ -1,6 +1,6 @@
 import { clamp, invLerp } from "../math/utils";
 import { hslToRgb } from "../renderer/utils/color";
-import { positions } from "./buffers";
+import { positions } from "./particlesBuffers";
 
 export const getColor = (out: [number, number, number], i: number) => {
   const y = positions[i * 3 + 1];

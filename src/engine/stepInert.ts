@@ -1,6 +1,6 @@
 import { quat } from "gl-matrix";
 import { lerp } from "../math/utils";
-import { positions, rotations, setQuat } from "./buffers";
+import { positions, rotations, setQuat } from "./particlesBuffers";
 import { nPhysic, nUnderneath, SIZE_PHYSIC } from "./constants";
 
 const q = quat.create();

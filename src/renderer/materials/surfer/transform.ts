@@ -1,6 +1,6 @@
 import { mat3, mat4, quat, vec3 } from "gl-matrix";
 import { gl } from "../../../canvas";
-import { setVec3 } from "../../../engine/buffers";
+import { setVec3 } from "../../../engine/particlesBuffers";
 import { position, rotation } from "../../../engine/stepSurfer";
 import { lookAtMatrix, perspectiveMatrix } from "../../camera";
 import { getFlatShadingNormals } from "../../utils/flatShading";

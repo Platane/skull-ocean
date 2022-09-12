@@ -5,7 +5,7 @@ import {
   getScreenX,
   getScreenY,
 } from "../renderer/utils/raycast";
-import { positions as particlesPositions } from "./buffers";
+import { positions as particlesPositions } from "./particlesBuffers";
 import { ITEM_RADIUS, nPhysic } from "./constants";
 
 export const lookAt = vec3.create();

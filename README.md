@@ -9,6 +9,7 @@
 - [x] [phy] quad tree to speed up collision detection
 - [ ] [phy] rotation impulse on contact
 - [ ] [phy] run in worker
+- [ ] [phy] round world instead of squared
 - [ ] [rendering] sky box
 - [ ] [rendering] surfer
 - [ ] [rendering] depth effect

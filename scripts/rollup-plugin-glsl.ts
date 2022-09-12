@@ -1,5 +1,5 @@
 import { createFilter } from "rollup-pluginutils";
-import { Plugin, TransformHook } from "rollup";
+import { Plugin } from "rollup";
 
 export const glsl = (
   opts: {
@@ -14,7 +14,7 @@ export const glsl = (
 
   const filter = createFilter(opts.include, opts.exclude);
 
-  const transform: TransformHook = (code, id) => {
+  const transform: Plugin["transform"] = (code, id) => {
     if (filter(id)) {
       if (opts.compress) {
         code = code

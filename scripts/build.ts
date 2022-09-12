@@ -11,27 +11,8 @@ import {
   createRollupInputOptions,
   minifyHtmlOptions,
   rollupOutputOptions,
+  terserOptions,
 } from "./rollup-config";
-
-export const terserOptions: MinifyOptions = {
-  compress: {
-    keep_infinity: true,
-    pure_getters: true,
-    unsafe_arrows: true,
-    unsafe_math: true,
-    unsafe_methods: true,
-    inline: true,
-    booleans_as_integers: true,
-    passes: 10,
-  },
-  format: {
-    wrap_func_args: false,
-    comments: false,
-  },
-  mangle: { properties: true, toplevel: true },
-  ecma: 2020,
-  toplevel: true,
-};
 
 const formatSize = (s: number) => (s / 1024).toFixed(2) + "K";
 

@@ -1,10 +1,8 @@
 import "./debug/mock-random";
 import "./debug/auto-reload";
-import "./debug/debug";
+// import "./debug/debug";
 
 import "./controls";
-
-import "./engine/initialPosition";
 
 import { render } from "./renderer/render";
 

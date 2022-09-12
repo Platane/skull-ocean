@@ -190,3 +190,27 @@ export const stepPhysic = (dt: number) => {
     updateItemInGrid(i, px, py, positions[i * 3 + 0], positions[i * 3 + 2]);
   }
 };
+
+//
+// initial positions
+//
+for (let i = nPhysic; i--; ) {
+  // set random rotation
+  quat.fromEuler(
+    q,
+    //
+    Math.random() * 360,
+    Math.random() * 360,
+    Math.random() * 360
+  );
+  setQuat(rotations, i, q);
+
+  // uniformly spread
+  positions[i * 3 + 0] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
+  positions[i * 3 + 1] = Math.random() * 1 + 1;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * SIZE_PHYSIC * 2;
+
+  // push to the grid
+  getCells(cells1, positions[i * 3 + 0], positions[i * 3 + 2]);
+  for (let k = cells1.length; k--; ) cells1[k].add(i);
+}

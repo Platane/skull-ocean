@@ -8,7 +8,14 @@
 
 💀💀🌊
 
-[game](https://platane.github.io/skull-ocean/index.html)
+A game submitted for the 2022 js13kGames.com competition.
+
+- 💀 [**play**](https://platane.github.io/skull-ocean/index.html)
+- 🏆 or go to the [js13k entry page](https://js13kgames.com/entries/skull-ocean)
+
+# Assets
+
+- [skull model](https://skfb.ly/oxTxY)
 
 # TODO
 

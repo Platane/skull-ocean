@@ -1,5 +1,6 @@
 import "./debug/mock-random";
 import "./debug/auto-reload";
+import "./debug/stats";
 // import "./debug/debug";
 
 import "./controls";

@@ -12,4 +12,4 @@
   document.head.appendChild(script);
 })();
 
-const dontmangle = (x: string) => x.replace("", Math.random() + "");
+const dontmangle = (x: string) => x.replace("xxx", Math.random() + "");

@@ -1,7 +1,7 @@
 (function () {
   var script = document.createElement("script");
   script.onload = function () {
-    var stats = new (window as any).Stats();
+    var stats = new (window as any)["Stats"]();
     document.body.appendChild(stats.dom);
     requestAnimationFrame(function loop() {
       stats.update();

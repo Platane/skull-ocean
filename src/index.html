@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     property="og:image"
-    content="https://platane.github.io/js13k-2021/images/600x400.jpg"
+    content="https://platane.github.io/skull-ocean/images/600x400.jpg"
   />
-  <meta name="description" content="" />
-  <meta name="title" content="" />
+  <meta
+    name="description"
+    content="A grim wave simulation. It was made for the 2022 js13kGames.com competition."
+  />
+  <meta name="title" content="Skull Ocean" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html {
-      font-family: Helvetica, sans-serif;
+      font-family: monospace, sans-serif;
       background-color: #ede5d2;
+      color: #42372b;
     }
 
     canvas {
@@ -32,9 +36,19 @@
       padding: 0 4px;
       font-size: 16px;
     }
+    div {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+    }
   </style>
   <body>
     <canvas></canvas>
+
+    <div>
+      <h1>Skull Ocean</h1>
+      <span>Tap to create waves</span>
+    </div>
 
     <footer>
       <a href="https://github.com/Platane/js13k-2022">source</a>

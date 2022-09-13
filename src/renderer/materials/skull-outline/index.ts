@@ -6,8 +6,14 @@ import { createOutlineGeometry } from "../../geometries/skull-bin";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
+import { worldMatrix } from "../../camera";
 
 const program = createProgram(gl, codeVert, codeFrag);
+
+//
+// uniforms
+//
+const u_matrix = gl.getUniformLocation(program, "u_matrix");
 
 //
 // attributes
@@ -43,6 +49,8 @@ let nVerticesInstance = 0;
 
 export const draw = () => {
   gl.useProgram(program);
+
+  gl.uniformMatrix4fv(u_matrix, false, worldMatrix);
 
   gl.bindVertexArray(vao);
 

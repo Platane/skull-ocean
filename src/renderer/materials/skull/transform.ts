@@ -8,7 +8,7 @@ import {
 } from "../../../engine/particlesBuffers";
 import { getColor } from "../../../engine/color";
 import { nParticles } from "../../../engine/constants";
-import { lookAtMatrix, perspectiveMatrix } from "../../camera";
+import { lookAtMatrix3 } from "../../camera";
 
 export { nParticles } from "../../../engine/constants";
 
@@ -32,7 +32,6 @@ const normalTransformMatrices = Array.from({ length: nParticles }, (_, i) => {
   return m;
 });
 
-const transformMatrix = mat4.create();
 const m3 = mat3.create();
 
 // use gl.bufferData once, then use bufferSubData which is suppose to be faster
@@ -58,11 +57,14 @@ export const updateTransform = () => {
     getColor(color, i);
 
     // set the world matrix
-    mat4.fromRotationTranslation(transformMatrix, rotation, position);
-    mat4.multiply(transformMatrix, lookAtMatrix, transformMatrix);
-    mat4.multiply(worldMatrices[i], perspectiveMatrix, transformMatrix);
+    mat4.fromRotationTranslation(worldMatrices[i], rotation, position);
 
-    mat3.normalFromMat4(m3, transformMatrix);
+    // compute inv - transpose
+    mat3.fromMat4(m3, worldMatrices[i]);
+    mat3.multiply(m3, lookAtMatrix3, m3);
+    mat3.invert(m3, m3);
+    mat3.transpose(m3, m3);
+
     normalTransformMatrices[i][0] = m3[0];
     normalTransformMatrices[i][1] = m3[1];
     normalTransformMatrices[i][2] = m3[2];

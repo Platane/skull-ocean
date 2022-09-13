@@ -19,13 +19,14 @@ export const getCells = (out: Set<number>[], x: number, y: number) => {
   const cX = Math.floor((x - gridOffsetX) / gridResolution);
   const cY = Math.floor((y - gridOffsetY) / gridResolution);
 
-  if (cX < 0 || cX >= gridN || cY < 0 || cY >= gridN) {
-    out.length = 0;
-    return;
-  }
+  out.pop();
+  out.pop();
+  out.pop();
+  out.pop();
 
-  out.length = 1;
-  out[0] = grid[getCellIndex(cX, cY)];
+  if (cX < 0 || cX >= gridN || cY < 0 || cY >= gridN) return;
+
+  out.push(grid[getCellIndex(cX, cY)]);
 
   const xm = 1 - (x - cX * gridResolution) > gridOverlap && cX + 1 < gridN;
   const ym = 1 - (y - cY * gridResolution) > gridOverlap && cY + 1 < gridN;

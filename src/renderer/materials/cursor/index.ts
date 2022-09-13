@@ -6,6 +6,7 @@ import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
 import { mat4 } from "gl-matrix";
 import { lookAt } from "../../../engine/stepSurfer";
+import { cursor } from "../../../engine/stepWaves";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
@@ -86,7 +87,7 @@ export const draw = () => {
 
   gl.bindVertexArray(vao);
 
-  mat4.fromTranslation(matrix, lookAt);
+  mat4.fromTranslation(matrix, cursor);
   mat4.multiply(matrix, worldMatrix, matrix);
 
   gl.uniformMatrix4fv(u_matrix, false, matrix);

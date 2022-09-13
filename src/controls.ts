@@ -14,7 +14,7 @@ import {
   onTouchEnd_wave,
   onTouchMove_wave,
   onTouchStart_wave,
-} from "./engine/waveCreator";
+} from "./engine/stepWaves";
 
 let tap: { pageX: number; pageY: number; timeStamp: number } | null = null;
 const onStart = (touches: Touches, event: Event) => {

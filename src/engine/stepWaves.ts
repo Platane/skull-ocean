@@ -1,6 +1,13 @@
 import { vec2, vec3 } from "gl-matrix";
 import { lerp } from "three/src/math/MathUtils";
 import { SIZE_PHYSIC } from "./constants";
+import { Handler } from "../controls-type";
+import { clamp } from "../math/utils";
+import {
+  getScreenX,
+  getScreenY,
+  projectOnGround,
+} from "../renderer/utils/raycast";
 
 type ForceLine = {
   n: vec2;
@@ -21,6 +28,11 @@ export const forceLines = [] as (ForceLine & {
 })[];
 
 const ZERO = vec2.create();
+export const cursor = vec3.create();
+
+//
+// swell init
+//
 
 const N = SIZE_PHYSIC * 1.15;
 const swells = Array.from({ length: 3 }).map((_, i, { length }) => {
@@ -40,17 +52,117 @@ const swells = Array.from({ length: 3 }).map((_, i, { length }) => {
     force: vec3.set(vec3.create(), 0, -lerp(0.5, 0.8, Math.random()) * 0, 0),
   };
 });
-
 forceLines.push(...(swells as any));
+
+//
+// step
+//
 
 export const stepWaves = (dt: number) => {
   for (let i = forceLines.length; i--; ) {
     const forceLine = forceLines[i];
 
     forceLine.dN += forceLine.velocity * dt;
+
+    if (forceLine !== tmpLine && Math.abs(forceLine.dN) > SIZE_PHYSIC * 1.5)
+      forceLines.splice(i, 1);
   }
 
   for (const swell of swells) {
     if (swell.dN > SIZE_PHYSIC * 1.15) swell.dN -= SIZE_PHYSIC * 1.15 * 2;
+  }
+
+  if (drag) {
+    const startT = Date.now() / 1000;
+    const start = drag[0];
+    let i = 0;
+    for (; i < drag.length - 1 && drag[i].t - startT < SWIPE_DURATION; i++);
+    const end = drag[i];
+
+    //
+
+    const dt = startT - end.t;
+    const l = Math.hypot(start.x - end.x, start.y - end.y);
+
+    if (l < 0.001) {
+      tmpLine.n[0] = 0;
+      tmpLine.n[1] = 0;
+      tmpLine.dN = 9999;
+      tmpLine.dOrtho = 9999;
+    } else {
+      const v = l / dt;
+
+      const n = tmpLine.n;
+
+      const velocity = Math.sqrt(v) * 1.3;
+
+      n[0] = -(end.x - start.x) / l;
+      n[1] = -(end.y - start.y) / l;
+      tmpLine.dN = n[0] * start.x + n[1] * start.y;
+      tmpLine.dOrtho = -n[1] * start.x + n[0] * start.y;
+      tmpLine.l = 1;
+      tmpLine.force[1] = -3;
+      tmpLine.velocity = velocity;
+    }
+  }
+};
+
+const tmpLine = {
+  n: vec2.create(),
+  l: 0,
+  dN: 1,
+  dOrtho: 1,
+  h: 1,
+  velocity: 0,
+  force: vec3.set(vec3.create(), 0, 0, 0),
+  age: 0,
+  lifeSpan: Infinity,
+};
+forceLines.push(tmpLine);
+
+let drag = null as { x: number; y: number; t: number }[] | null;
+const SWIPE_DURATION = 0.35;
+
+export const onTouchStart_wave: Handler = (touches) => {
+  drag = [];
+  onTouchMove_wave(touches);
+};
+
+export const onTouchMove_wave: Handler = (touches) => {
+  let x = 0;
+  let y = 0;
+  for (const { pageX, pageY } of touches) {
+    x += pageX;
+    y += pageY;
+  }
+  x /= touches.length;
+  y /= touches.length;
+
+  projectOnGround(cursor, getScreenX(x), getScreenY(y), 1);
+
+  if (!drag) return;
+
+  drag.unshift({ t: Date.now() / 1000, x: cursor[0], y: cursor[2] });
+  while (drag[0].t - drag[drag.length - 1].t > SWIPE_DURATION) drag.pop();
+};
+
+export const onTouchEnd_wave: Handler = () => {
+  if (drag) {
+    const newLine = {
+      ...tmpLine,
+      n: vec2.copy(vec2.create(), tmpLine.n),
+      force: vec3.copy(vec3.create(), tmpLine.force),
+      l: 1 + tmpLine.velocity * 0.6,
+    };
+
+    forceLines.push(newLine);
+
+    tmpLine.n[0] = 0;
+    tmpLine.n[1] = 0;
+    tmpLine.dN = 99999;
+    tmpLine.dOrtho = 99999;
+    tmpLine.force[1] = 0;
+
+    drag = null;
   }
 };

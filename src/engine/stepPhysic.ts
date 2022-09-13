@@ -9,7 +9,6 @@ import {
 import { ITEM_RADIUS, nPhysic, SIZE_PHYSIC } from "./constants";
 import { getCells, updateItemInGrid } from "./grid";
 import { forceLines } from "./stepWaves";
-import { state as waveCreatorState } from "./waveCreator";
 
 //
 // tmp vars
@@ -140,26 +139,6 @@ export const stepPhysic = (dt: number) => {
       }
     }
 
-    // pushed by the cursor
-    if (waveCreatorState.drag) {
-      u[0] = waveCreatorState.drag[0].x;
-      u[1] = 2.3;
-      u[2] = waveCreatorState.drag[0].y;
-
-      const R = 5;
-
-      vec3.sub(v, p, u);
-      const dSquare = vec3.sqrLen(v);
-
-      if (dSquare < R ** 2) {
-        const d = Math.sqrt(dSquare);
-
-        const f = 35 / Math.max(0.5, d * 1.2);
-
-        applyForce(i, v, f / d);
-      }
-    }
-
     // push each other
 
     // query the grid to get the closest entities
@@ -173,13 +152,14 @@ export const stepPhysic = (dt: number) => {
 
           seen.add(j);
 
-          const dSquare = vec3.sqrDist(p, u);
+          vec3.sub(v, p, u);
+
+          const dSquare = vec3.length(v);
 
           if (dSquare < (ITEM_RADIUS * 2) ** 2) {
             const d = Math.sqrt(dSquare);
 
             if (d > 0.0001) {
-              vec3.sub(v, p, u);
               vec3.scale(v, v, 1 / d);
             } else {
               vec3.set(v, 0, 1, 0);

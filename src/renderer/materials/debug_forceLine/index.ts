@@ -78,7 +78,7 @@ const update = () => {
     const c3 = vec3.create();
     const c4 = vec3.create();
 
-    const l = 0.1;
+    const l = 0.15;
 
     vec3.copy(c1, o);
     vec3.scaleAndAdd(c1, c1, u, l);

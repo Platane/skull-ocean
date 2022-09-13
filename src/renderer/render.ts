@@ -29,8 +29,8 @@ export const render = () => {
   // drawFlat();
   drawHorizon();
   // drawDebug_CollisionPlane();
-  drawDebug_ForceLine();
-  drawGiz();
+  // drawDebug_ForceLine();
+  // drawGiz();
   drawCursor();
   // drawSurfer();
   drawSkull();

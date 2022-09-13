@@ -34,8 +34,8 @@ export const cursor = vec3.create();
 // swell init
 //
 
-const N = SIZE_PHYSIC * 1.15;
-const swells = Array.from({ length: 3 }).map((_, i, { length }) => {
+const N = SIZE_PHYSIC * 1.6;
+const swells = Array.from({ length: 2 }).map((_, i, { length }) => {
   const k = i / length;
 
   const n = vec2.create();
@@ -49,7 +49,7 @@ const swells = Array.from({ length: 3 }).map((_, i, { length }) => {
     h: 3,
     dOrtho: 0,
     velocity: 4,
-    force: vec3.set(vec3.create(), 0, -lerp(0.5, 0.8, Math.random()) * 0, 0),
+    force: vec3.set(vec3.create(), 0, -lerp(0.5, 0.6, Math.random()), 0),
   };
 });
 forceLines.push(...(swells as any));
@@ -87,8 +87,9 @@ export const stepWaves = (dt: number) => {
     if (l < 0.001) {
       tmpLine.n[0] = 0;
       tmpLine.n[1] = 0;
-      tmpLine.dN = 9999;
-      tmpLine.dOrtho = 9999;
+      tmpLine.dN = 99999;
+      tmpLine.dOrtho = 99999;
+      tmpLine.force[1] = 0;
     } else {
       const v = l / dt;
 
@@ -100,8 +101,8 @@ export const stepWaves = (dt: number) => {
       n[1] = -(end.y - start.y) / l;
       tmpLine.dN = n[0] * start.x + n[1] * start.y;
       tmpLine.dOrtho = -n[1] * start.x + n[0] * start.y;
-      tmpLine.l = 1;
-      tmpLine.force[1] = -3;
+      tmpLine.l = 1 + Math.sqrt(v);
+      tmpLine.force[1] = -2;
       tmpLine.velocity = velocity;
     }
   }
@@ -121,7 +122,7 @@ const tmpLine = {
 forceLines.push(tmpLine);
 
 let drag = null as { x: number; y: number; t: number }[] | null;
-const SWIPE_DURATION = 0.35;
+const SWIPE_DURATION = 0.2;
 
 export const onTouchStart_wave: Handler = (touches) => {
   drag = [];
@@ -148,14 +149,23 @@ export const onTouchMove_wave: Handler = (touches) => {
 
 export const onTouchEnd_wave: Handler = () => {
   if (drag) {
-    const newLine = {
-      ...tmpLine,
-      n: vec2.copy(vec2.create(), tmpLine.n),
-      force: vec3.copy(vec3.create(), tmpLine.force),
-      l: 1 + tmpLine.velocity * 0.6,
-    };
+    if (tmpLine.velocity > 3) {
+      const force = vec3.create();
+      vec3.set(force, tmpLine.n[0] * 0.1, 1, tmpLine.n[1] * 0.1);
+      vec3.scale(
+        force,
+        force,
+        -(0.5 + 1 - clamp(tmpLine.velocity, 0, 5) / 5) * 2
+      );
 
-    forceLines.push(newLine);
+      const newLine = {
+        ...tmpLine,
+        n: vec2.copy(vec2.create(), tmpLine.n),
+        force,
+        l: tmpLine.l * 1.2,
+      };
+      forceLines.push(newLine);
+    }
 
     tmpLine.n[0] = 0;
     tmpLine.n[1] = 0;

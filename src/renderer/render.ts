@@ -31,7 +31,7 @@ export const render = () => {
   // drawDebug_CollisionPlane();
   // drawDebug_ForceLine();
   // drawGiz();
-  drawCursor();
+  // drawCursor();
   // drawSurfer();
   drawSkull();
   drawSkullOutline();

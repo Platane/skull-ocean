@@ -85,9 +85,9 @@ export const stepPhysic = (dt: number) => {
     getVec3(p, positions, i);
 
     // solid friction
-    acceleration[i * 3 + 0] += (-velocities[i * 3 + 0] * 0.03) / dt;
-    acceleration[i * 3 + 1] += (-velocities[i * 3 + 1] * 0.03) / dt;
-    acceleration[i * 3 + 2] += (-velocities[i * 3 + 2] * 0.03) / dt;
+    acceleration[i * 3 + 0] += (-velocities[i * 3 + 0] * 0.018) / dt;
+    acceleration[i * 3 + 1] += (-velocities[i * 3 + 1] * 0.018) / dt;
+    acceleration[i * 3 + 2] += (-velocities[i * 3 + 2] * 0.018) / dt;
 
     // rotation velocity reduction
     getQuat(vRot, velocitiesRot, i);
@@ -105,7 +105,7 @@ export const stepPhysic = (dt: number) => {
     setQuat(velocitiesRot, i, vRot);
 
     // gravity
-    acceleration[i * 3 + 1] -= 6;
+    acceleration[i * 3 + 1] -= 7;
 
     // buoyance if "underwater"
     if (p[1] < 0) {

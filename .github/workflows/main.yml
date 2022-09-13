@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: pnpm/action-setup@v2
         with:
@@ -24,8 +24,10 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: pnpm/action-setup@v2
         with:
@@ -37,6 +39,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
       - run: npm run build
 
       - uses: actions/upload-artifact@v2
@@ -45,8 +48,13 @@ jobs:
           path: ./dist/*
 
       - name: generate badge
-        run: |
-          node -e "const s=require('fs').statSync('dist/bundle.zip').size;console.log(JSON.stringify({label:'size',message:(s/1024).toFixed(2)+'K',color:s<13312?'success':'important'}))" > dist/shieldio_size.json
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs=require('fs');
+            const s=fs.statSync('dist/bundle.zip').size;
+            const content={label:'size',message:(s/1024).toFixed(2)+'K',color:s<13312?'success':'important'};
+            fs.writeFileSync('dist/shieldio_size.json',JSON.stringify(content))
 
       - name: copy images
         run: cp -R doc/images dist/images
@@ -54,10 +62,6 @@ jobs:
       - name: deploy to gh-pages
         uses: crazy-max/ghaction-github-pages@v2
         if: success() && github.ref == 'refs/heads/master'
-        with:
-          build_dir: dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   analyze-bundle:
     needs: build
@@ -67,7 +71,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: build
+          name: github-pages
 
       - name: test the bundle against the report endpoint
         run: |

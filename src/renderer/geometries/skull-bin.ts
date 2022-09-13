@@ -7,9 +7,9 @@ import { bufferToFaces, facesToBuffer } from "./types";
 //
 // inside the binary, vertices array are concatenated such as:
 // <--- socket ---><--- skull ---><--- patch --->
-const socketLength = 297;
-const skullLength = 1017;
-const patchLength = 117;
+const socketLength = 414;
+const skullLength = 900;
+const patchLength = 108;
 
 const getVertices = async () => {
   const buffer = await fetch("skull-vertices.bin").then((res) =>

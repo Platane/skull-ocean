@@ -68,19 +68,19 @@ export const packGeometry = async () => {
     .map(packVertices);
 
   // flip the faces of the patch somehow
-  for (let i = 0; i < packs[2].length; i += 9) {
-    const tmp0 = packs[2][i + 0 + 0];
-    const tmp1 = packs[2][i + 0 + 1];
-    const tmp2 = packs[2][i + 0 + 2];
+  // for (let i = 0; i < packs[2].length; i += 9) {
+  //   const tmp0 = packs[2][i + 0 + 0];
+  //   const tmp1 = packs[2][i + 0 + 1];
+  //   const tmp2 = packs[2][i + 0 + 2];
 
-    packs[2][i + 0 + 0] = packs[2][i + 3 + 0];
-    packs[2][i + 0 + 1] = packs[2][i + 3 + 1];
-    packs[2][i + 0 + 2] = packs[2][i + 3 + 2];
+  //   packs[2][i + 0 + 0] = packs[2][i + 3 + 0];
+  //   packs[2][i + 0 + 1] = packs[2][i + 3 + 1];
+  //   packs[2][i + 0 + 2] = packs[2][i + 3 + 2];
 
-    packs[2][i + 3 + 0] = tmp0;
-    packs[2][i + 3 + 1] = tmp1;
-    packs[2][i + 3 + 2] = tmp2;
-  }
+  //   packs[2][i + 3 + 0] = tmp0;
+  //   packs[2][i + 3 + 1] = tmp1;
+  //   packs[2][i + 3 + 2] = tmp2;
+  // }
 
   const packed = new Uint16Array(packs.flat());
 

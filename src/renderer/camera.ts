@@ -4,7 +4,7 @@ import { clamp } from "../math/utils";
 import { Handler } from "../controls-type";
 import { updateGeometry as updateHorizonGeometry } from "./materials/horizon/transform";
 
-const maxZoom = 100;
+const maxZoom = 10;
 const minZoom = 0;
 
 // initialize static perspective matrix
@@ -36,7 +36,7 @@ export const worldMatrix = mat4.create();
 export const normalTransformMatrix3 = mat3.create();
 
 const update = () => {
-  const radius = 2 + 0.8 + zoom * 0.39;
+  const radius = 12 + zoom * zoom * 0.18;
 
   const sinPhiRadius = Math.sin(phi) * radius;
   eye[0] = sinPhiRadius * Math.sin(theta);
@@ -75,7 +75,11 @@ const rotateMove: H = ([{ pageX: x, pageY: y }]) => {
     theta -= (dx / window.innerHeight) * rotationSpeed;
     phi -= (dy / window.innerHeight) * rotationSpeed;
 
-    phi = clamp(phi, Math.PI * 0.01, Math.PI * 0.99);
+    // theta = clamp(theta, Math.PI * 0.01, Math.PI * 0.99);
+    phi = clamp(phi, Math.PI * 0.14, Math.PI * 0.45);
+
+    document.getElementsByTagName("div")[0].style.opacity =
+      "" + clamp(phi * 4 - 3.4, 0, 1);
 
     px = x;
     py = y;

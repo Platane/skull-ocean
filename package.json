@@ -11,7 +11,6 @@
     "three": "0.143.0",
     "three-stdlib": "2.14.3",
     "@types/three": "0.143.2",
-    "@swc/core": "1.2.241",
     "@ampproject/rollup-plugin-closure-compiler": "0.27.0",
     "@babel/core": "7.18.10",
     "@babel/preset-typescript": "7.18.6",
@@ -46,7 +45,7 @@
     "test": "jest --no-cache --passWithNoTests --verbose",
     "type": "tsc --noEmit",
     "lint": "prettier -c '**/*.{ts,tsx,js,jsx,json,md}' '!**/{dist,coverage}/**'",
-    "build": "node -e \"require('sucrase/register');require('./scripts/build.ts').build()\"",
-    "dev": "node -e \"require('sucrase/register');require('./scripts/dev.ts').dev()\""
+    "build": "sucrase-node ./scripts/build.ts",
+    "dev": "sucrase-node ./scripts/dev.ts"
   }
 }

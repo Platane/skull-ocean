@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { rollup } from "rollup";
 import { minify as minifyHtml } from "html-minifier-terser";
-import { minify, MinifyOptions } from "terser";
+import { minify } from "terser";
 import { execFileSync } from "child_process";
 // @ts-ignore
 import advzipBin from "advzip-bin";
@@ -72,3 +72,5 @@ const listFiles = (filename: string): string[] => {
       .flat();
   return [];
 };
+
+build();

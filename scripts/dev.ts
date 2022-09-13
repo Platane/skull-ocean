@@ -74,3 +74,5 @@ export const dev = async () => {
 
   return { close };
 };
+
+dev();

@@ -154,7 +154,7 @@ export const stepPhysic = (dt: number) => {
 
           vec3.sub(v, p, u);
 
-          const dSquare = vec3.length(v);
+          const dSquare = vec3.squaredLength(v);
 
           if (dSquare < (ITEM_RADIUS * 2) ** 2) {
             const d = Math.sqrt(dSquare);

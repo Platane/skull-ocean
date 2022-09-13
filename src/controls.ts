@@ -11,6 +11,7 @@ import {
   onTap as onTap_surfer,
 } from "./engine/stepSurfer";
 import {
+  onTap_wave,
   onTouchEnd_wave,
   onTouchMove_wave,
   onTouchStart_wave,
@@ -52,6 +53,7 @@ const onEnd = (touches: Touches, event: Event) => {
 
   if (tap && Date.now() < tap.timeStamp + 300) {
     onTap_surfer(touches);
+    onTap_wave(touches);
   }
 };
 

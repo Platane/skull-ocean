@@ -1,1 +1,1 @@
-export const ui = { mode: "wave" as "camera" | "wave" };
+export const ui = { mode: "camera" as "camera" | "wave" };

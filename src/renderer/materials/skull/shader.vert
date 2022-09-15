@@ -11,6 +11,7 @@ in mat4 a_normalMatrix;
 
 // uniforms
 uniform mat4 u_matrix;
+uniform mat4 u_normalMatrix;
 
 out vec3 v_color;
 out vec3 v_normal;
@@ -18,7 +19,7 @@ out vec3 v_normal;
 
 void main() {
   gl_Position = u_matrix * a_matrix * a_position;
-  v_normal = vec3( a_normalMatrix * a_normal);
+  v_normal = vec3( u_normalMatrix * a_normalMatrix  * a_normal);
   v_color = a_color.rgb;
 }
 

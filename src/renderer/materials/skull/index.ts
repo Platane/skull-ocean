@@ -11,7 +11,7 @@ import { createSkullGeometry } from "../../geometries/skull-bin";
 
 import codeFrag from "./shader.frag";
 import codeVert from "./shader.vert";
-import { worldMatrix } from "../../camera";
+import { normalTransformMatrix4, worldMatrix } from "../../camera";
 
 const program = createProgram(gl, codeVert, codeFrag);
 
@@ -19,6 +19,7 @@ const program = createProgram(gl, codeVert, codeFrag);
 // uniforms
 //
 const u_matrix = gl.getUniformLocation(program, "u_matrix");
+const u_normalMatrix = gl.getUniformLocation(program, "u_normalMatrix");
 
 //
 // attributes
@@ -82,6 +83,7 @@ export const draw = () => {
   gl.useProgram(program);
 
   gl.uniformMatrix4fv(u_matrix, false, worldMatrix);
+  gl.uniformMatrix4fv(u_normalMatrix, false, normalTransformMatrix4);
 
   gl.bindVertexArray(vao);
 

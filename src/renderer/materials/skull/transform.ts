@@ -9,6 +9,7 @@ import {
 import { getColor } from "../../../engine/color";
 import { nParticles } from "../../../engine/constants";
 import { lookAtMatrix3 } from "../../camera";
+import { mat4FromMat3, mat4FromMat3_ } from "../../../math/mat4";
 
 export { nParticles } from "../../../engine/constants";
 
@@ -61,19 +62,13 @@ export const updateTransform = () => {
 
     // compute inv - transpose
     mat3.fromMat4(m3, worldMatrices[i]);
-    mat3.multiply(m3, lookAtMatrix3, m3);
     mat3.invert(m3, m3);
     mat3.transpose(m3, m3);
 
-    normalTransformMatrices[i][0] = m3[0];
-    normalTransformMatrices[i][1] = m3[1];
-    normalTransformMatrices[i][2] = m3[2];
-    normalTransformMatrices[i][4] = m3[3];
-    normalTransformMatrices[i][5] = m3[4];
-    normalTransformMatrices[i][6] = m3[5];
-    normalTransformMatrices[i][8] = m3[6];
-    normalTransformMatrices[i][9] = m3[7];
-    normalTransformMatrices[i][10] = m3[8];
+    // equivalent but somehow slower
+    // mat3.normalFromMat4(m3, worldMatrices[i]);
+
+    mat4FromMat3_(normalTransformMatrices[i], m3);
 
     // set the color
     colors[i * 4 + 0] = color[0];

@@ -2,6 +2,7 @@ import { mat4, vec3, mat3 } from "gl-matrix";
 import { canvas } from "../canvas";
 import { clamp } from "../math/utils";
 import { Handler } from "../controls-type";
+import { mat4FromMat3 } from "../math/mat4";
 import { updateGeometry as updateHorizonGeometry } from "./materials/horizon/transform";
 
 const maxZoom = 10;
@@ -34,6 +35,7 @@ export const worldMatrix = mat4.create();
 
 // to apply to normal
 export const normalTransformMatrix3 = mat3.create();
+export const normalTransformMatrix4 = mat4.create();
 
 const update = () => {
   const radius = 12 + zoom * zoom * 0.18;
@@ -49,6 +51,8 @@ const update = () => {
   mat3.fromMat4(lookAtMatrix3, lookAtMatrix);
 
   mat3.normalFromMat4(normalTransformMatrix3, lookAtMatrix);
+
+  mat4FromMat3(normalTransformMatrix4, normalTransformMatrix3);
 
   updateHorizonGeometry(eye, lookAtPoint);
 };

@@ -1,5 +1,6 @@
 import { createFilter } from "rollup-pluginutils";
 import { Plugin } from "rollup";
+import { GlslMinify } from "webpack-glsl-minify/build/minify";
 
 export const glsl = (
   opts: {
@@ -14,23 +15,15 @@ export const glsl = (
 
   const filter = createFilter(opts.include, opts.exclude);
 
-  const transform: Plugin["transform"] = (code, id) => {
+  const transform: Plugin["transform"] = async (code, id) => {
     if (filter(id)) {
+      const minifier = new GlslMinify({ preserveUniforms: true });
+
       if (opts.compress) {
-        code = code
-          // remove comment
-          .replace(/\/\/[^\n]*/g, "\n")
+        // const shader = await minifier.execute(code);
+        // code = shader.sourceCode;
 
-          // pack multiple line break
-          .replace(/\s*\n\s*/g, "\n")
-
-          // pack white spaces
-          .replace(/[\t ]+/g, " ")
-
-          // remove white spaces when not between two words
-          .replace(/[^\w]([ \n])+/g, (a) => a.trim())
-          .replace(/([ \n])+[^\w]/g, (a) => a.trim())
-          .trim();
+        code = minifyGlsl(code);
       }
 
       return {
@@ -42,3 +35,20 @@ export const glsl = (
 
   return { name: "glsl", transform } as Plugin;
 };
+
+// yolo
+const minifyGlsl = (code: string) =>
+  code
+    // remove comment
+    .replace(/\/\/[^\n]*/g, "\n")
+
+    // pack multiple line break
+    .replace(/\s*\n\s*/g, "\n")
+
+    // pack white spaces
+    .replace(/[\t ]+/g, " ")
+
+    // remove white spaces when not between two words
+    .replace(/[^\w]([ \n])+/g, (a) => a.trim())
+    .replace(/([ \n])+[^\w]/g, (a) => a.trim())
+    .trim();

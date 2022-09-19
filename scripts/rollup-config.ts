@@ -1,15 +1,11 @@
 import * as path from "path";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
-import babel from "@rollup/plugin-babel";
 import { InputOptions, RollupOptions } from "rollup";
 import { MinifyOptions } from "terser";
 import compiler from "@ampproject/rollup-plugin-closure-compiler";
+import esbuild from "rollup-plugin-esbuild";
 import { glsl } from "./rollup-plugin-glsl";
-// @ts-ignore
-import babelPluginDefine from "babel-plugin-transform-define";
-// @ts-ignore
-import babelPresetTypescript from "@babel/preset-typescript";
 
 export const terserOptions: MinifyOptions = {
   compress: {
@@ -48,22 +44,14 @@ export const createRollupInputOptions = (production: boolean) =>
         extensions: [".ts", ".js"],
       }),
 
-      babel({
-        babelHelpers: "bundled",
-        babelrc: false,
-        extensions: [".ts", ".js"],
-        presets: [
-          //
-          babelPresetTypescript,
-        ],
-        plugins: [
-          [
-            babelPluginDefine,
-            {
-              "process.env.NODE_ENV": production ? "production" : "dev",
-            },
-          ],
-        ],
+      esbuild({
+        include: ["**/*.ts"],
+        exclude: /node_modules/,
+        sourceMap: false,
+        target: "es2020",
+        define: {
+          "process.env.NODE_ENV": production ? '"production"' : '"dev"',
+        },
       }),
 
       glsl({

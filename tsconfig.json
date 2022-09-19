@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "target": "es2020",
+    "moduleResolution": "node",
     "lib": ["ES2020", "DOM"],
     "strict": true,
     "esModuleInterop": true,

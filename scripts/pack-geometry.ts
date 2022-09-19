@@ -84,17 +84,24 @@ export const packGeometry = async () => {
 
   const packed = new Uint16Array(packs.flat());
 
-  console.log(`
+  const constant = `
+// auto-generated - don't edit
+// 
 // the mesh is composed of 3 sub-meshes : 
 //   the skull, the eye socket, and patches that cover the eye socket ( skull + patch is kind of a hull )
 // 
 // inside the binary, vertices array are concatenated such as:
 // <--- socket ---><--- skull ---><--- patch --->
-const socketLength=${packs[0].length};
-const skullLength=${packs[1].length};
-const patchLength=${packs[2].length};
-  
-  `);
+export const socketLength=${packs[0].length};
+export const skullLength=${packs[1].length};
+export const patchLength=${packs[2].length};
+
+export const uri="skull-vertices.bin";
+  `;
+  fs.writeFileSync(
+    path.join(__dirname, "../src/renderer/geometries/skull-bin-constant.ts"),
+    constant
+  );
 
   fs.writeFileSync(path.join(__dirname, "../dist/skull-vertices.bin"), packed);
 };

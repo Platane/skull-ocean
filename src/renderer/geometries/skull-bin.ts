@@ -1,20 +1,15 @@
 import { getFlatShadingNormals } from "../utils/flatShading";
 import { inflate } from "./inflate";
+import {
+  patchLength,
+  skullLength,
+  socketLength,
+  uri,
+} from "./skull-bin-constant";
 import { bufferToFaces, facesToBuffer } from "./types";
 
-// the mesh is composed of 3 sub-meshes :
-//   the skull, the eye socket, and patches that cover the eye socket ( skull + patch is kind of a hull )
-//
-// inside the binary, vertices array are concatenated such as:
-// <--- socket ---><--- skull ---><--- patch --->
-const socketLength = 414;
-const skullLength = 900;
-const patchLength = 108;
-
 const getVertices = async () => {
-  const buffer = await fetch("skull-vertices.bin").then((res) =>
-    res.arrayBuffer()
-  );
+  const buffer = await fetch(uri).then((res) => res.arrayBuffer());
 
   const packed = new Uint16Array(buffer);
 
